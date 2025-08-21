@@ -91,6 +91,7 @@
   "item.overclockedorgans.trenchcoat": "Trenchcoat",
 
   "block.overclockedorgans.component_box": "Component Box",
+  "block.overclockedorgans.blueprint_archive": "Blueprint Archive",
   "block.overclockedorgans.charger": "Charger",
 
   "itemGroup.overclockedorgans.manufacturedModTab": "Cyberware Manufactured",
@@ -98,5 +99,6 @@
   "itemGroup.overclockedorgans.equipmentModTab": "Cyberware Equipment",
   "itemGroup.overclockedorgans.blockModTab": "Cyberware Blocks",
 
-  "container.overclockedorgans.component_box": "Component Box"
+  "container.overclockedorgans.component_box": "Component Box",
+  "container.overclockedorgans.blueprint_archive": "Blueprint Archive"
 }

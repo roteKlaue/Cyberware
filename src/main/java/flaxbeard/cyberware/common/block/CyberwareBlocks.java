@@ -26,6 +26,8 @@ public class CyberwareBlocks {
 
     public static final Pair<RegistryObject<BlockItem>, RegistryObject<ComponentBoxBlock>> COMPONENT_BOX_BLOCK = registerBlock("component_box", ComponentBoxBlock::new, ComponentBoxItem::new);
 
+    public static final Pair<RegistryObject<BlockItem>, RegistryObject<BlueprintArchiveBlock>> BLUEPRINT_ARCHIVE_BLOCK = registerBlock("blueprint_archive", BlueprintArchiveBlock::new);
+
     public static final Pair<RegistryObject<BlockItem>, RegistryObject<ChargerBlock>> CHARGER_BLOCK = registerBlock("charger", ChargerBlock::new);
 
     public static <T extends Block> Pair<RegistryObject<BlockItem>, RegistryObject<T>> registerBlock(String id, Supplier<T> supplier) {

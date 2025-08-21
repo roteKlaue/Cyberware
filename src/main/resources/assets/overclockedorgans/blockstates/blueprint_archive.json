@@ -1,21 +1,8 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model": "minecraft:orientable",
-        "textures": {
-            "particle": "overclockedorgans:blocks/blank_machine",
-            "top": "overclockedorgans:blocks/blank_machine",
-            "side": "overclockedorgans:blocks/blank_machine",
-            "front": "overclockedorgans:blocks/blueprint_archive"
-        }
-    },
-    "variants": {
-        "facing": {
-            "east": { "y": 90 },
-            "west": { "y": 270 },
-            "north": { "y": 0 },
-            "south": { "y": 180 }
-        },
-        "inventory": [{}]
-    }
+  "variants": {
+    "facing=north": { "model": "overclockedorgans:block/blueprint_archive", "y": 0 },
+    "facing=south": { "model": "overclockedorgans:block/blueprint_archive", "y": 180 },
+    "facing=west":  { "model": "overclockedorgans:block/blueprint_archive", "y": 270 },
+    "facing=east":  { "model": "overclockedorgans:block/blueprint_archive", "y": 90 }
+  }
 }

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IEI",
+    "IDI",
+    "III"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "D": { "item": "minecraft:diamond" },
+    "E": { "item": "overclockedorgans:cybereyes_salvaged" }
+  },
+  "result": {
+    "item": "overclockedorgans:scanner",
+    "count": 1
+  }
+}

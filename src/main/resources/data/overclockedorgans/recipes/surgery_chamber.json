@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "IBI",
+    "IDI"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "B": { "item": "minecraft:iron_block" },
+    "D": { "item": "minecraft:iron_door" }
+  },
+  "result": {
+    "item": "overclockedorgans:surgery_chamber",
+    "count": 1
+  }
+}

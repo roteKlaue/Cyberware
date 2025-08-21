@@ -1,9 +1,11 @@
 package flaxbeard.cyberware.client.gui;
 
 import flaxbeard.cyberware.OverclockedOrgans;
-import flaxbeard.cyberware.common.block.entities.ComponentBoxBlockEntity;
+import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
@@ -18,6 +20,17 @@ public class CyberwareContainers {
     public static final RegistryObject<ContainerType<ComponentBoxContainer>> COMPONENT_BOX =
             CONTAINERS.register("component_box", () -> IForgeContainerType.create(ComponentBoxContainer::new));
 
+    public static final RegistryObject<ContainerType<BlueprintArchiveContainer>> BLUEPRINT_ARCHIVE =
+            CONTAINERS.register("blueprint_archive",
+                    () -> IForgeContainerType.create((windowId, inv, data) -> {
+                        BlockPos pos = data.readBlockPos();
+                        TileEntity tile = inv.player.level.getBlockEntity(pos);
+                        if (tile instanceof BlueprintArchiveBlockEntity) {
+                            return new BlueprintArchiveContainer(windowId, inv, (BlueprintArchiveBlockEntity) tile);
+                        }
+                        return null;
+                    }));
+
 
     public static void register(IEventBus bus) {
         CONTAINERS.register(bus);
@@ -25,5 +38,6 @@ public class CyberwareContainers {
 
     public static void initClient(final FMLClientSetupEvent event) {
         ScreenManager.register(CyberwareContainers.COMPONENT_BOX.get(), ComponentBoxScreen::new);
+        ScreenManager.register(CyberwareContainers.BLUEPRINT_ARCHIVE.get(), BlueprintArchiveScreen::new);
     }
 }

@@ -17,6 +17,11 @@ public class CyberwareBlockEntities {
                     () -> TileEntityType.Builder.of(ComponentBoxBlockEntity::new, CyberwareBlocks.COMPONENT_BOX_BLOCK.getSecond().get())
                     .build(null));
 
+    public static final RegistryObject<TileEntityType<BlueprintArchiveBlockEntity>> BLUEPRINT_ARCHIVE =
+            BLOCK_ENTITIES.register("blueprint_archive",
+                    () -> TileEntityType.Builder.of(BlueprintArchiveBlockEntity::new, CyberwareBlocks.BLUEPRINT_ARCHIVE_BLOCK.getSecond().get())
+                            .build(null));
+
     public static void register(IEventBus bus) {
         BLOCK_ENTITIES.register(bus);
     }

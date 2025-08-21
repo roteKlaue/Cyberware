@@ -13,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
 
@@ -22,6 +20,17 @@ public class ComponentBoxContainer extends Container {
     private final ComponentBoxBlockEntity tileEntity;
     private final NonNullList<ItemStack> items;
     private final int numRows;
+
+    private static class ComponentBoxSlot extends Slot {
+        public ComponentBoxSlot(IInventory inventory, int id, int x, int y) {
+            super(inventory, id, x, y);
+        }
+
+        @Override
+        public boolean mayPlace(@Nonnull ItemStack stack) {
+            return CyberwareItems.COMPONENT.stream().anyMatch(r -> r.get() == stack.getItem());
+        }
+    }
 
     public ComponentBoxContainer(int id, PlayerInventory playerInventory, CompoundNBT beTag) {
         super(CyberwareContainers.COMPONENT_BOX.get(), id);
@@ -35,17 +44,6 @@ public class ComponentBoxContainer extends Container {
         this.numRows = this.items.size() / 9;
 
         buildSlots(playerInventory, new SimpleInventoryWrapper(this.items));
-    }
-
-    private static class ComponentBoxSlot extends Slot {
-        public ComponentBoxSlot(IInventory inventory, int id, int x, int y) {
-            super(inventory, id, x, y);
-        }
-
-        @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
-            return CyberwareItems.COMPONENT.stream().anyMatch(r -> r.get() == stack.getItem());
-        }
     }
 
     public ComponentBoxContainer(int id, PlayerInventory playerInventory, PacketBuffer data) {
@@ -172,7 +170,6 @@ public class ComponentBoxContainer extends Container {
             }
         }
     }
-
 
     private static class SimpleInventoryWrapper implements IInventory {
         private final NonNullList<ItemStack> list;
