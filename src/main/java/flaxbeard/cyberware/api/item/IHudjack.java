@@ -4,5 +4,6 @@ import net.minecraft.item.ItemStack;
 
 public interface IHudjack
 {
-	public boolean isActive(ItemStack stack);
+    boolean isActive(ItemStack stack);
 }
+

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "overclockedorgans:block/component_box", "y": 180 },
+    "facing=south": { "model": "overclockedorgans:block/component_box", "y": 0 },
+    "facing=west":  { "model": "overclockedorgans:block/component_box", "y": 90 },
+    "facing=east":  { "model": "overclockedorgans:block/component_box", "y": 270 }
+  }
+}

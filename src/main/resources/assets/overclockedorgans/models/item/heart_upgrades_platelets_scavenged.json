@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "overclockedorgans:item/heart_upgrades_platelets_scavenged"
+    }
+}

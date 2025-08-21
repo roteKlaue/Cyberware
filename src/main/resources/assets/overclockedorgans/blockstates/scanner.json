@@ -1,0 +1,13 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "overclockedorgans:scanner",
+        "textures": {
+            "particle": "overclockedorgans:blocks/surgery_chamber_top"
+        }
+    },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{}]
+    }
+}

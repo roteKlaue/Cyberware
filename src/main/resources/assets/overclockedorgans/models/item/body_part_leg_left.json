@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "overclockedorgans:item/body_part_leg_left"
+    }
+}

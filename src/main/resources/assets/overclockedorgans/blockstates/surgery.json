@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "": {
+      "model": "minecraft:block/cube_column",
+      "textures": {
+        "particle": "roboticparts:block/surgery_chamber_top",
+        "end": "roboticparts:block/surgery_chamber_top",
+        "side": "roboticparts:block/robosurgeon_screen"
+      }
+    }
+  }
+}

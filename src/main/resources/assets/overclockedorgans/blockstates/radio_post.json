@@ -1,0 +1,50 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "overclockedorgans:fence_post",
+        "textures": {
+            "particle": "overclockedorgans:blocks/surgery_chamber_top",
+            "texture": "overclockedorgans:blocks/radio_post"
+        }
+    },
+    "variants": {
+        "north": {
+            "true": {
+                "submodel": { 
+                    "walln": { "model": "overclockedorgans:fence_bar_n" }
+                }
+            },
+            "false": {}
+        },
+        "south": {
+            "true": {
+                "submodel": { 
+                    "walls": { "model": "overclockedorgans:fence_bar_n", "y": 180, "uvlock": true }
+                }
+            },
+            "false": {}
+        },
+        "east": {
+            "true": {
+                "submodel": { 
+                    "walle": { "model": "overclockedorgans:fence_bar_n", "y": 90, "uvlock": true }
+                }
+            },
+            "false": {}
+        },
+        "west": {
+            "true": {
+                "submodel": { 
+                    "wallw": { "model": "overclockedorgans:fence_bar_n", "y": 270, "uvlock": true }
+                }
+            },
+            "false": {}
+        },
+        "transformed": {
+            "0": {},
+            "1": {},
+            "2": {}
+        },
+        "inventory": [{}]
+    }
+}
