@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " PI",
+    "III",
+    "ICI"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "P": { "item": "minecraft:piston" },
+    "C": { "item": "minecraft:crafting_table" }
+  },
+  "result": {
+    "item": "overclockedorgans:engineering_table",
+    "count": 1
+  }
+}

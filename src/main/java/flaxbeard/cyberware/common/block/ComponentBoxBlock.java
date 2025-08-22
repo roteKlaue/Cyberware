@@ -2,10 +2,12 @@ package flaxbeard.cyberware.common.block;
 
 import flaxbeard.cyberware.common.block.entities.ComponentBoxBlockEntity;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -28,6 +30,8 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -120,6 +124,7 @@ public class ComponentBoxBlock extends Block implements IWaterLoggable {
                     ComponentBoxBlockEntity comp = (ComponentBoxBlockEntity) entity;
                     CompoundNBT beTag = comp.saveToItemStack();
                     stack.getOrCreateTag().put("BlockEntityTag", beTag);
+                    stack.setHoverName(comp.getCustomName());
                 }
                 player.setItemInHand(hand, stack);
                 world.removeBlock(position, false);
@@ -148,6 +153,7 @@ public class ComponentBoxBlock extends Block implements IWaterLoggable {
         if (tileEntity instanceof ComponentBoxBlockEntity) {
             CompoundNBT beTag = ((ComponentBoxBlockEntity) tileEntity).saveToItemStack();
             drop.getOrCreateTag().put("BlockEntityTag", beTag);
+            drop.setHoverName(((ComponentBoxBlockEntity) tileEntity).getCustomName());
         }
 
         if (!world.isClientSide) {
@@ -170,5 +176,35 @@ public class ComponentBoxBlock extends Block implements IWaterLoggable {
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return CyberwareBlockEntities.COMPONENT_BOX.get().create();
+    }
+
+    @Override
+    public void setPlacedBy(@Nonnull World world,
+                            @Nonnull BlockPos pos,
+                            @Nonnull BlockState state,
+                            @Nullable LivingEntity placer,
+                            @Nonnull ItemStack stack) {
+        if (stack.hasCustomHoverName()) {
+            TileEntity tile = world.getBlockEntity(pos);
+            if (tile instanceof ComponentBoxBlockEntity) {
+                ((ComponentBoxBlockEntity) tile).setCustomName(stack.getHoverName());
+            }
+        }
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public ItemStack getCloneItemStack(IBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+        TileEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof ComponentBoxBlockEntity) {
+            ItemStack stack = new ItemStack(this);
+            ITextComponent name = ((ComponentBoxBlockEntity) tile).getDisplayName();
+            if (tile instanceof ComponentBoxBlockEntity && !(name instanceof TranslationTextComponent)) {
+                stack.setHoverName(name);
+            }
+            return stack;
+        }
+        return super.getCloneItemStack(world, pos, state);
     }
 }

@@ -6,6 +6,10 @@ import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
 import flaxbeard.cyberware.common.item.CyberwareItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -54,6 +58,7 @@ public class OverclockedOrgans {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().options);
+        registerItemProperties();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -79,4 +84,20 @@ public class OverclockedOrgans {
             LOGGER.info("HELLO from Register Block");
         }
     }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void registerItemProperties() {
+        ItemModelsProperties.register(
+                CyberwareItems.BLUEPRINT.get(),
+                new ResourceLocation("blueprint_type"),
+                (stack, world, entity) -> {
+                    if (stack.hasTag() && stack.getTag() != null && stack.getTag().contains("BlueprintId")) {
+                        String id = stack.getTag().getString("BlueprintId");
+                        return id.equals("empty") ? 1f : 0f;
+                    }
+                    return 0f;
+                }
+        );
+    }
+
 }

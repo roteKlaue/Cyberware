@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "ICI",
+    " I "
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "C": { "item": "minecraft:chest" },
+    "A": { "item": "overclockedorgans:synthnerves" }
+  },
+  "result": {
+    "item": "overclockedorgans:component_box",
+    "count": 1
+  }
+}

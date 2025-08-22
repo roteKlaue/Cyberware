@@ -20,6 +20,7 @@ import java.util.Collections;
 
 public class ComponentBoxBlockEntity extends LockableTileEntity {
     private final NonNullList<ItemStack> items = NonNullList.withSize(18, ItemStack.EMPTY);
+    private ITextComponent customName;
 
     public ComponentBoxBlockEntity() {
         super(CyberwareBlockEntities.COMPONENT_BOX.get());
@@ -85,13 +86,30 @@ public class ComponentBoxBlockEntity extends LockableTileEntity {
     public CompoundNBT save(@Nonnull CompoundNBT nbt) {
         super.save(nbt);
         ItemStackHelper.saveAllItems(nbt, items);
+        if (nbt.contains("CustomName", 8)) {
+            this.customName = ITextComponent.Serializer.fromJson(nbt.getString("CustomName"));
+        }
         return nbt;
     }
 
     public CompoundNBT saveToItemStack() {
         CompoundNBT nbt = new CompoundNBT();
         ItemStackHelper.saveAllItems(nbt, items);
+        if (this.customName != null) {
+            nbt.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+        }
         return nbt;
+    }
+
+    @Override
+    @Nonnull
+    public ITextComponent getDisplayName() {
+        return customName != null ?
+                customName : getDefaultName();
+    }
+
+    public void setCustomName(@Nonnull ITextComponent name) {
+        this.customName = name;
     }
 
     @Nonnull

@@ -1,29 +1,12 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model": "minecraft:cube",
-        "textures": {
-            "particle": "overclockedorgans:blocks/surgery_chamber_top",
-            "down": "overclockedorgans:blocks/surgery_chamber_top",
-            "up": "overclockedorgans:blocks/surgery_chamber_top",
-            "north": "overclockedorgans:blocks/engineering_bottom_side2",
-            "east": "overclockedorgans:blocks/engineering_bottom_side1",
-            "west": "overclockedorgans:blocks/engineering_bottom_side1",
-            "south": "overclockedorgans:blocks/engineering_bottom_side2"
-        }
-    },
-    "variants": {
-        "facing": {
-            "east": {"y" : 90},
-            "west": {"y" : 270},
-            "north": {},
-            "south": {"y" : 180}
-        },
-        "half": {
-            "lower": {},
-            "upper": {
-                "model" : "overclockedorgans:engineering_top"
-            }
-        }
-    }
+  "variants": {
+    "facing=east,half=lower": { "model": "overclockedorgans:block/engineering_bottom", "y" : 270 },
+    "facing=east,half=upper": { "model": "overclockedorgans:block/engineering_top", "y" : 270 },
+    "facing=west,half=lower": { "model": "overclockedorgans:block/engineering_bottom", "y" : 90 },
+    "facing=west,half=upper": { "model": "overclockedorgans:block/engineering_top", "y" : 90 },
+    "facing=north,half=lower": { "model": "overclockedorgans:block/engineering_bottom", "y" : 180  },
+    "facing=north,half=upper": { "model": "overclockedorgans:block/engineering_top", "y" : 180  },
+    "facing=south,half=lower": { "model": "overclockedorgans:block/engineering_bottom", "y" : 0 },
+    "facing=south,half=upper": { "model": "overclockedorgans:block/engineering_top", "y" : 0 }
+  }
 }

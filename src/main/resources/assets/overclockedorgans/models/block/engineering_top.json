@@ -1,39 +1,42 @@
 {
-    "parent": "block/block",
-    "textures": {
-        "0": "roboticparts:blocks/engineering_piston_top_front",
-        "1": "roboticparts:blocks/engineering_piston_top_side",
-        "2": "roboticparts:blocks/engineering_top_front",
-        "3": "roboticparts:blocks/engineering_top_side",
-        "4": "roboticparts:blocks/engineering_top_top",
-        "5": "roboticparts:blocks/engineering_piston_top_top"
-    },
-    "elements": [
-        {
-            "name": "Holder",
-            "from": [ 4.0, 8.0, 4.0 ], 
-            "to": [ 12.0, 16.0, 12.0 ], 
-            "faces": {
-                "north": { "texture": "#0", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
-                "east": { "texture": "#1", "uv": [ 8.0, 0.0, 0.0, 8.0 ] },
-                "south": { "texture": "#0", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
-                "west": { "texture": "#1", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
-                "up": { "texture": "#5", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
-                "down": { "texture": "#0", "uv": [ 0.0, 0.0, 8.0, 8.0 ] }
-            }
-        },
-        {
-            "name": "Tall",
-            "from": [ 4.0, 0.0, 0.0 ], 
-            "to": [ 12.0, 16.0, 4.0 ], 
-            "faces": {
-                "north": { "texture": "#2", "uv": [ 4.0, 0.0, 12.0, 16.0 ] },
-                "east": { "texture": "#3", "uv": [ 0.0, 0.0, 4.0, 16.0 ] },
-                "south": { "texture": "#2", "uv": [ 4.0, 0.0, 12.0, 16.0 ] },
-                "west": { "texture": "#3", "uv": [ 4.0, 0.0, 0.0, 16.0 ] },
-                "up": { "texture": "#4", "uv": [ 0.0, 0.0, 8.0, 4.0 ] },
-                "down": { "texture": "#4", "uv": [ 0.0, 0.0, 8.0, 4.0 ] }
-            }
-        }
-    ]
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"6": "overclockedorgans:block/engineering_piston_top_front",
+		"7": "overclockedorgans:block/engineering_piston_top_side",
+		"8": "overclockedorgans:block/engineering_piston_top_top",
+		"9": "overclockedorgans:block/engineering_top_front",
+		"10": "overclockedorgans:block/engineering_top_side",
+		"11": "overclockedorgans:block/engineering_top_top",
+		"particle": "overclockedorgans:block/engineering_piston_top_front"
+	},
+	"elements": [
+		{
+			"name": "Holder",
+			"from": [4, 8, 4],
+			"to": [12, 16, 12],
+			"faces": {
+				"north": {"uv": [0, 0, 8, 8], "texture": "#missing"},
+				"east": {"uv": [8, 0, 0, 8], "texture": "#7"},
+				"south": {"uv": [0, 0, 8, 8], "texture": "#6"},
+				"west": {"uv": [0, 0, 8, 8], "texture": "#7"},
+				"up": {"uv": [0, 0, 8, 8], "texture": "#8"},
+				"down": {"uv": [0, 0, 8, 8], "texture": "#6"}
+			}
+		},
+		{
+			"name": "Tall",
+			"from": [4, 0, 0],
+			"to": [12, 16, 4],
+			"faces": {
+				"north": {"uv": [4, 0, 12, 16], "texture": "#9"},
+				"east": {"uv": [0, 0, 4, 16], "texture": "#10"},
+				"south": {"uv": [4, 0, 12, 16], "texture": "#9"},
+				"west": {"uv": [4, 0, 0, 16], "texture": "#10"},
+				"up": {"uv": [0, 0, 8, 4], "texture": "#11"},
+				"down": {"uv": [0, 0, 8, 4], "texture": "#11"}
+			}
+		}
+	]
 }

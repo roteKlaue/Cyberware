@@ -1,11 +1,10 @@
 package flaxbeard.cyberware.common.item;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.item.equipment.CyberwareArmorItem;
 import flaxbeard.cyberware.common.item.equipment.CyberwareArmorMaterials;
 import flaxbeard.cyberware.common.item.equipment.CyberwareSwordItem;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
@@ -17,6 +16,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -27,7 +27,7 @@ public class CyberwareItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, OverclockedOrgans.MOD_ID);
 
-    public static final List<RegistryObject<? extends Item>> COMPONENT = Collections.unmodifiableList(
+    public static final List<RegistryObject<CyberwareBaseItem>> COMPONENT = Collections.unmodifiableList(
             Stream.of("actuator", "reactor", "titanium", "ssc", "plating", "fiberoptics", "fullerene", "synthnerves", "storage", "microelectric")
                     .map(item -> ITEMS.register(item, CyberwareBaseItem::new))
                     .collect(Collectors.toList())
@@ -36,26 +36,34 @@ public class CyberwareItems {
     public static final RegistryObject<CyberwareSwordItem> KATANA = ITEMS.register("katana",
             () -> new CyberwareSwordItem(ItemTier.DIAMOND,3,-2.4f, new Item.Properties().durability(100)));
 
-    public static final RegistryObject<? extends Item> CYBER_EYES_MANUFACTURED = ITEMS.register("cybereyes_manufactured",
+    public static final RegistryObject<CyberwareBaseItem> CYBER_EYES_MANUFACTURED = ITEMS.register("cybereyes_manufactured",
             CyberwareBaseItem::new);
     public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = ITEMS.register("cybereyes_salvaged",
             CyberwareBaseItem::makeSalvaged);
 
-    public static final RegistryObject<Item> SHADES = ITEMS.register("shades",
-            () -> new CyberwareArmorItem(CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD,
-                    new Item.Properties()));
+    public static final RegistryObject<CyberwareArmorItem> SHADES = registerArmor("f",
+            CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD);
 
-    public static final RegistryObject<Item> SHADES2 = ITEMS.register("shades2",
-            () -> new CyberwareArmorItem(CyberwareArmorMaterials.SHADES2, EquipmentSlotType.HEAD,
-                    new Item.Properties()));
+    public static final RegistryObject<CyberwareArmorItem> SHADES2 = registerArmor("shades2",
+                  CyberwareArmorMaterials.SHADES2, EquipmentSlotType.HEAD);
 
-    public static final RegistryObject<Item> JACKET = ITEMS.register("jacket",
-            () -> new CyberwareArmorItem(CyberwareArmorMaterials.JACKET, EquipmentSlotType.CHEST,
-                    new Item.Properties()));
+    public static final RegistryObject<CyberwareArmorItem> JACKET = registerArmor("jacket",
+                  CyberwareArmorMaterials.JACKET, EquipmentSlotType.CHEST);
 
     public static final RegistryObject<CyberwareArmorItem> TRENCHCOAT = registerArmor("trenchcoat",
             CyberwareArmorMaterials.TRENCHCOAT, EquipmentSlotType.CHEST);
 
+    public static final RegistryObject<BlueprintItem> BLUEPRINT = ITEMS.register("blueprint",
+            BlueprintItem::new);
+
+    public static final List<RegistryObject<? extends Item>> MANUFACTURED_ITEMS = Arrays.asList(
+//            BLUEPRINT,
+            CYBER_EYES_MANUFACTURED,
+            SHADES,
+            SHADES2,
+            JACKET,
+            TRENCHCOAT
+    );
 
     public static <T extends Block> RegistryObject<BlockItem> registerBlockItem(String name, RegistryObject<T> block) {
         return registerBlockItem(name, block, BlockItem::new);
@@ -72,6 +80,8 @@ public class CyberwareItems {
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
+        // OverclockedOrgans.LOGGER.info("Cyberware Items Registered");
+        // OverclockedOrgans.LOGGER.info(JACKET.getId().getPath());
     }
 }
 

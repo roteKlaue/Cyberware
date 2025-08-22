@@ -1,6 +1,7 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "overclockedorgans:item/blueprint"
-    }
+  "parent": "item/generated",
+  "textures": { "layer0": "overclockedorgans:item/blueprint" },
+  "overrides": [
+    { "predicate": { "blueprint_type": 1 }, "model": "overclockedorgans:item/blueprint_blank" }
+  ]
 }
