@@ -4,6 +4,7 @@ import flaxbeard.cyberware.client.gui.CyberwareContainers;
 import flaxbeard.cyberware.common.block.CyberwareBlocks;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
 import flaxbeard.cyberware.common.item.CyberwareItems;
+import flaxbeard.cyberware.common.misc.CyberwareRecipeSerializers;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemModelsProperties;
@@ -41,6 +42,7 @@ public class OverclockedOrgans {
         CyberwareBlocks.register(eventBus);
         CyberwareBlockEntities.register(eventBus);
         CyberwareContainers.register(eventBus);
+        CyberwareRecipeSerializers.register(eventBus);
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::enqueueIMC);
@@ -62,7 +64,7 @@ public class OverclockedOrgans {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("overclockedorgans", "helloworld", () -> {
+        InterModComms.sendTo(MOD_ID, "helloworld", () -> {
             LOGGER.info("Hello world from the MDK");
             return "Hello world";
         });

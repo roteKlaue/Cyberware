@@ -47,11 +47,6 @@ public class EngineeringTableBlock extends TallBlock<EngineeringTableBlockEntity
                                @Nonnull ISelectionContext context) {
         Direction facing = state.getValue(FACING);
         if (isBottom(state)) return VoxelShapes.block();
-        switch (facing) {
-            case EAST  : return TOP_EAST;
-            case SOUTH : return TOP_SOUTH;
-            case WEST  : return TOP_WEST;
-            default    : return TOP_NORTH;
-        }
+        return getVoxelShape(facing, TOP_EAST, TOP_SOUTH, TOP_WEST, TOP_NORTH);
     }
 }

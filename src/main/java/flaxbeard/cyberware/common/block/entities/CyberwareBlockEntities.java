@@ -28,6 +28,9 @@ public class CyberwareBlockEntities {
     public static final RegistryObject<TileEntityType<EngineeringTableBlockEntity>> ENGINEERING_TABLE =
             registerBlockEntity("engineering_table", EngineeringTableBlockEntity::new, CyberwareBlocks.ENGINEERING_TABLE_BLOCK);
 
+    public static final RegistryObject<TileEntityType<SurgeryChamberBlockEntity>> SURGERY_CHAMBER =
+            registerBlockEntity("surgery_chamber", SurgeryChamberBlockEntity::new, CyberwareBlocks.SURGERY_CHAMBER_BLOCK);
+
     public static <T extends TileEntity, B extends Block>
     RegistryObject<TileEntityType<T>> registerBlockEntity(
             String name,

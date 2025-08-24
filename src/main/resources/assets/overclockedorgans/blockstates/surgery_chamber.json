@@ -1,27 +1,12 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model": "overclockedorgans:surgery_bottom",
-        "textures": {
-            "particle": "overclockedorgans:blocks/surgery_chamber_top"
-        }
-    },
-    "variants": {
-        "facing": {
-            "east": {"y" : 90},
-            "west": {"y" : 270},
-            "north": {},
-            "south": {"y" : 180}
-        },
-        "half": {
-            "lower": {},
-            "upper": {
-                "model" : "overclockedorgans:surgery_top"
-            }
-        },
-        "open": {
-            "true": {},
-            "false": {}
-        }
-    }
+  "variants": {
+    "facing=east,half=lower": { "model": "overclockedorgans:block/surgery_bottom", "y" : 270 },
+    "facing=east,half=upper": { "model": "overclockedorgans:block/surgery_top", "y" : 270 },
+    "facing=west,half=lower": { "model": "overclockedorgans:block/surgery_bottom", "y" : 90 },
+    "facing=west,half=upper": { "model": "overclockedorgans:block/surgery_top", "y" : 90 },
+    "facing=north,half=lower": { "model": "overclockedorgans:block/surgery_bottom", "y" : 180  },
+    "facing=north,half=upper": { "model": "overclockedorgans:block/surgery_top", "y" : 180  },
+    "facing=south,half=lower": { "model": "overclockedorgans:block/surgery_bottom", "y" : 0 },
+    "facing=south,half=upper": { "model": "overclockedorgans:block/surgery_top", "y" : 0 }
+  }
 }

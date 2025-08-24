@@ -17,6 +17,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -177,5 +178,18 @@ public class TallBlock<T extends TileEntity> extends Block {
     @SuppressWarnings("deprecation")
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
         return state.setValue(FACING, mirrorIn.mirror(state.getValue(FACING)));
+    }
+
+    public static VoxelShape getVoxelShape(@Nonnull Direction facing,
+                                    @Nonnull VoxelShape topEast,
+                                    @Nonnull VoxelShape topSouth,
+                                    @Nonnull VoxelShape topWest,
+                                    @Nonnull VoxelShape topNorth) {
+        switch (facing) {
+            case EAST  : return topEast;
+            case SOUTH : return topSouth;
+            case WEST  : return topWest;
+            default    : return topNorth;
+        }
     }
 }

@@ -93,6 +93,7 @@
   "block.overclockedorgans.component_box": "Component Box",
   "block.overclockedorgans.engineering_table": "Engineering Table",
   "block.overclockedorgans.blueprint_archive": "Blueprint Archive",
+  "block.overclockedorgans.surgery_chamber": "Surgery Chamber",
   "block.overclockedorgans.charger": "Charger",
 
   "itemGroup.overclockedorgans.manufacturedModTab": "Cyberware Manufactured",

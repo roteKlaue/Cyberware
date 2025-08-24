@@ -41,7 +41,7 @@ public class CyberwareItems {
     public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = ITEMS.register("cybereyes_salvaged",
             CyberwareBaseItem::makeSalvaged);
 
-    public static final RegistryObject<CyberwareArmorItem> SHADES = registerArmor("f",
+    public static final RegistryObject<CyberwareArmorItem> SHADES = registerArmor("shades",
             CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD);
 
     public static final RegistryObject<CyberwareArmorItem> SHADES2 = registerArmor("shades2",
