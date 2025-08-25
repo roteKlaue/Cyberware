@@ -107,27 +107,27 @@ public class TallBlock<T extends TileEntity> extends Block {
                 .setValue(HALF, DoubleBlockHalf.LOWER);
     }
 
-    protected boolean isBottom(BlockState state) {
-        return state.getValue(HALF) == DoubleBlockHalf.LOWER;
+    protected boolean isTop(BlockState state) {
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER;
     }
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return isBottom(state);
+        return isTop(state);
     }
 
     @Nullable
     @Override
     public T createTileEntity(BlockState state, IBlockReader world) {
-        return isBottom(state) ? supplier.get() : null;
+        return isTop(state) ? supplier.get() : null;
     }
 
     @Nullable
     public T getMainTileEntity(World world, BlockPos pos, BlockState state) {
         if (!(state.getBlock() instanceof TallBlock)) return null;
 
-        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
-            pos = pos.below();
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
+            pos = pos.above();
         }
 
         TileEntity te = world.getBlockEntity(pos);
