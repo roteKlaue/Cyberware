@@ -2,14 +2,16 @@ package flaxbeard.cyberware.client.gui;
 
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
+import flaxbeard.cyberware.common.block.entities.ScannerBlockEntity;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -31,13 +33,26 @@ public class CyberwareContainers {
                         return null;
                     }));
 
+    public static final RegistryObject<ContainerType<ScannerContainer>> SCANNER =
+            CONTAINERS.register("scanner",
+                    () -> IForgeContainerType.create((windowId, inv, data) -> {
+                        BlockPos pos = data.readBlockPos();
+                        TileEntity tile = inv.player.level.getBlockEntity(pos);
+                        if (tile instanceof ScannerBlockEntity) {
+                            return new ScannerContainer(windowId, inv, (ScannerBlockEntity) tile);
+                        }
+                        return null;
+                    }));
+
 
     public static void register(IEventBus bus) {
         CONTAINERS.register(bus);
     }
 
-    public static void initClient(final FMLClientSetupEvent event) {
+    @OnlyIn(Dist.CLIENT)
+    public static void initScreens() {
         ScreenManager.register(CyberwareContainers.COMPONENT_BOX.get(), ComponentBoxScreen::new);
         ScreenManager.register(CyberwareContainers.BLUEPRINT_ARCHIVE.get(), BlueprintArchiveScreen::new);
+        ScreenManager.register(CyberwareContainers.SCANNER.get(), ScannerScreen::new);
     }
 }

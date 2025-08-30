@@ -1,6 +1,7 @@
 package flaxbeard.cyberware;
 
 import flaxbeard.cyberware.client.gui.CyberwareContainers;
+import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.block.CyberwareBlocks;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
 import flaxbeard.cyberware.common.item.CyberwareItems;
@@ -16,7 +17,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -37,6 +40,7 @@ public class OverclockedOrgans {
 
     public OverclockedOrgans() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CyberwareConfig.COMMON_CONFIG);
 
         CyberwareItems.register(eventBus);
         CyberwareBlocks.register(eventBus);
@@ -48,7 +52,6 @@ public class OverclockedOrgans {
         eventBus.addListener(this::enqueueIMC);
         eventBus.addListener(this::processIMC);
         eventBus.addListener(this::doClientStuff);
-        eventBus.addListener(CyberwareContainers::initClient);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -59,7 +62,7 @@ public class OverclockedOrgans {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().options);
+        CyberwareContainers.initScreens();
         registerItemProperties();
     }
 

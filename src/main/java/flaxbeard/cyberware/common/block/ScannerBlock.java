@@ -2,9 +2,10 @@ package flaxbeard.cyberware.common.block;
 
 import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
+import flaxbeard.cyberware.common.block.entities.ScannerBlockEntity;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -15,6 +16,8 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -24,9 +27,11 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlueprintArchiveBlock extends DirectionalBlock {
-    public BlueprintArchiveBlock() {
-        super(Properties.copy(Blocks.IRON_BLOCK).sound(SoundType.STONE));
+public class ScannerBlock extends DirectionalBlock {
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 15, 16);
+
+    public ScannerBlock() {
+        super(Properties.copy(Blocks.IRON_BLOCK));
     }
 
     @Override
@@ -36,7 +41,7 @@ public class BlueprintArchiveBlock extends DirectionalBlock {
 
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return CyberwareBlockEntities.BLUEPRINT_ARCHIVE.get().create();
+        return CyberwareBlockEntities.SCANNER.get().create();
     }
 
     @Override
@@ -47,8 +52,8 @@ public class BlueprintArchiveBlock extends DirectionalBlock {
                             @Nonnull ItemStack stack) {
         if (stack.hasCustomHoverName()) {
             TileEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof BlueprintArchiveBlockEntity) {
-                ((BlueprintArchiveBlockEntity) tile).setCustomName(stack.getHoverName());
+            if (tile instanceof ScannerBlockEntity) {
+                ((ScannerBlockEntity) tile).setCustomInventoryName(stack.getHoverName());
             }
         }
     }
@@ -58,10 +63,10 @@ public class BlueprintArchiveBlock extends DirectionalBlock {
     @SuppressWarnings("deprecation")
     public ItemStack getCloneItemStack(IBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         TileEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof BlueprintArchiveBlockEntity) {
+        if (tile instanceof ScannerBlockEntity) {
             ItemStack stack = new ItemStack(this);
-            ITextComponent name = ((BlueprintArchiveBlockEntity) tile).getDisplayName();
-            if (tile instanceof BlueprintArchiveBlockEntity && !(name instanceof TranslationTextComponent)) {
+            ITextComponent name = ((ScannerBlockEntity) tile).getDisplayName();
+            if (tile instanceof ScannerBlockEntity && !(name instanceof TranslationTextComponent)) {
                 stack.setHoverName(name);
             }
             return stack;
@@ -87,5 +92,15 @@ public class BlueprintArchiveBlock extends DirectionalBlock {
         }
 
         return ActionResultType.PASS;
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public VoxelShape getShape(@Nonnull BlockState state,
+                               @Nonnull IBlockReader worldIn,
+                               @Nonnull BlockPos pos,
+                               @Nonnull ISelectionContext context) {
+        return SHAPE;
     }
 }

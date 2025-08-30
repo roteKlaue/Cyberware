@@ -9,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +32,8 @@ public class BlueprintArchiveContainer extends Container {
 
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
-            return CyberwareItems.COMPONENT.stream().anyMatch(r -> r.get() == stack.getItem());
+            return CyberwareItems.BLUEPRINT.get().equals(stack.getItem())
+                    || Items.PAPER.equals(stack.getItem());
         }
     }
 
@@ -42,7 +44,7 @@ public class BlueprintArchiveContainer extends Container {
         for (int indexRow = 0; indexRow < numRows; indexRow++) {
             for (int indexColumn = 0; indexColumn < 9; indexColumn++) {
                 int index = indexColumn + indexRow * 9;
-                addSlot(new Slot(backingInventory, index, 8 + indexColumn * 18, 18 + indexRow * 18));
+                addSlot(new BlueprintArchiveSlot(backingInventory, index, 8 + indexColumn * 18, 18 + indexRow * 18));
             }
         }
 

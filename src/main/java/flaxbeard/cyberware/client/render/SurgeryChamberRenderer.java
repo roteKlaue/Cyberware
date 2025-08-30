@@ -16,6 +16,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 
+import javax.annotation.Nonnull;
+
 public class SurgeryChamberRenderer extends TileEntityRenderer<SurgeryChamberBlockEntity> {
     private static final SurgeryChamberModel MODEL = new SurgeryChamberModel();
     private static final ResourceLocation TEXTURE = new ResourceLocation(OverclockedOrgans.MOD_ID, "textures/models/surgery_chamber_door.png");
@@ -25,9 +27,9 @@ public class SurgeryChamberRenderer extends TileEntityRenderer<SurgeryChamberBlo
     }
 
     @Override
-    public void render(SurgeryChamberBlockEntity te, float partialTicks, MatrixStack ms,
-                       IRenderTypeBuffer buffer, int light, int overlay) {
-        if (te == null || te.getLevel() == null) return;
+    public void render(@Nonnull SurgeryChamberBlockEntity te, float partialTicks, @Nonnull MatrixStack ms,
+                       @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
+        if (te.getLevel() == null) return;
 
         BlockState state = te.getLevel().getBlockState(te.getBlockPos());
         if (!(state.getBlock() instanceof SurgeryChamberBlock)) return;

@@ -7,17 +7,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -26,9 +21,8 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class TallBlock<T extends TileEntity> extends Block {
+public class TallBlock<T extends TileEntity> extends DirectionalBlock {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private final Supplier<T> supplier;
     private final Class<? extends TileEntity> tileClass;
@@ -41,8 +35,7 @@ public class TallBlock<T extends TileEntity> extends Block {
         this.tileClass = Objects.requireNonNull(tileClass, "tileClass");
 
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(HALF, DoubleBlockHalf.LOWER)
-                .setValue(FACING, Direction.NORTH));
+                .setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
     @Deprecated
@@ -94,17 +87,16 @@ public class TallBlock<T extends TileEntity> extends Block {
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
+        BlockState state = super.getStateForPlacement(context);
         BlockPos pos = context.getClickedPos();
         World world = context.getLevel();
 
-        if (!world.getBlockState(pos.above()).canBeReplaced(context)) {
+        if (!world.getBlockState(pos.above()).canBeReplaced(context)
+            || state == null) {
             return null;
         }
 
-        Direction facing = context.getHorizontalDirection().getOpposite();
-        return this.defaultBlockState()
-                .setValue(FACING, facing)
-                .setValue(HALF, DoubleBlockHalf.LOWER);
+        return state.setValue(HALF, DoubleBlockHalf.LOWER);
     }
 
     protected boolean isTop(BlockState state) {
@@ -163,33 +155,7 @@ public class TallBlock<T extends TileEntity> extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HALF, FACING);
-    }
-
-    @Override
-    @Nonnull
-    @SuppressWarnings("deprecation")
-    public BlockState rotate(BlockState state, Rotation rot) {
-        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
-    }
-
-    @Override
-    @Nonnull
-    @SuppressWarnings("deprecation")
-    public BlockState mirror(BlockState state, Mirror mirrorIn) {
-        return state.setValue(FACING, mirrorIn.mirror(state.getValue(FACING)));
-    }
-
-    public static VoxelShape getVoxelShape(@Nonnull Direction facing,
-                                    @Nonnull VoxelShape topEast,
-                                    @Nonnull VoxelShape topSouth,
-                                    @Nonnull VoxelShape topWest,
-                                    @Nonnull VoxelShape topNorth) {
-        switch (facing) {
-            case EAST  : return topEast;
-            case SOUTH : return topSouth;
-            case WEST  : return topWest;
-            default    : return topNorth;
-        }
+        super.createBlockStateDefinition(builder);
+        builder.add(HALF);
     }
 }

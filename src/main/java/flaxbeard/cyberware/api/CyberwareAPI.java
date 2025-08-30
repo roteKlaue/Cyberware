@@ -1,5 +1,6 @@
 package flaxbeard.cyberware.api;
 
+import flaxbeard.cyberware.api.item.IDeconstructable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 
@@ -7,6 +8,12 @@ import javax.annotation.Nonnull;
 
 public class CyberwareAPI {
     public static final String DATA_TAG = "cyberwareFunctionData";
+
+    public static boolean canDeconstruct(ItemStack stack) {
+        return (!stack.isEmpty()
+                && stack.getItem() instanceof IDeconstructable
+                && ((IDeconstructable) stack.getItem()).canDestroy(stack));
+    }
 
     /**
      * Gets the NBT data for Cyberware related to its function. This data is removed when a piece of Cyberware

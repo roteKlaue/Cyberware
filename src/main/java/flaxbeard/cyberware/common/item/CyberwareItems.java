@@ -37,9 +37,9 @@ public class CyberwareItems {
             () -> new CyberwareSwordItem(ItemTier.DIAMOND,3,-2.4f, new Item.Properties().durability(100)));
 
     public static final RegistryObject<CyberwareBaseItem> CYBER_EYES_MANUFACTURED = ITEMS.register("cybereyes_manufactured",
-            CyberwareBaseItem::new);
+            TestCyberwareItem::new);
     public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = ITEMS.register("cybereyes_salvaged",
-            CyberwareBaseItem::makeSalvaged);
+            TestCyberwareItem::makeSalvaged);
 
     public static final RegistryObject<CyberwareArmorItem> SHADES = registerArmor("shades",
             CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD);
@@ -80,9 +80,5 @@ public class CyberwareItems {
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
-        // OverclockedOrgans.LOGGER.info("Cyberware Items Registered");
-        // OverclockedOrgans.LOGGER.info(JACKET.getId().getPath());
     }
 }
-
-

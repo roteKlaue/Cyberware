@@ -1,6 +1,6 @@
 {
-  "parent": "block/block",
-  "format_version": "1.9.0",
+    "parent": "block/block",
+    "format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "overclockedorgans:block/charger_side",

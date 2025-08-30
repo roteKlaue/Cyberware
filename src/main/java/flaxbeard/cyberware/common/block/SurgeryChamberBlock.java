@@ -8,7 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -114,12 +113,12 @@ public class SurgeryChamberBlock extends TallBlock<SurgeryChamberBlockEntity> {
         return ActionResultType.sidedSuccess(world.isClientSide);
     }
 
-    private void toggleDoor(World world, BlockPos pos, BlockState state) {
+    private void toggleDoor(World world, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         boolean newOpen = !state.getValue(OPEN);
         BlockState newState = state.setValue(OPEN, newOpen);
         world.setBlock(pos, newState, 2);
 
-        BlockPos otherPos = (state.getValue(HALF) == DoubleBlockHalf.UPPER) ? pos.below() : pos.above();
+        BlockPos otherPos = isTop(state) ? pos.below() : pos.above();
         BlockState other = world.getBlockState(otherPos);
         if (other.getBlock() == this) {
             world.setBlock(otherPos, other.setValue(OPEN, newOpen), 2);
@@ -137,11 +136,11 @@ public class SurgeryChamberBlock extends TallBlock<SurgeryChamberBlockEntity> {
         boolean open = state.getValue(OPEN);
 
         if (isTop(state)) {
-            return (!open) ? TOP_CLOSED :
-                    getVoxelShape(facing, TOP_EAST, TOP_SOUTH, TOP_WEST, TOP_NORTH);
+            return !open ? TOP_CLOSED :
+                    getDirectionalShape(facing, TOP_EAST, TOP_SOUTH, TOP_WEST, TOP_NORTH);
         } else {
-            return (!open) ? BOTTOM_CLOSED :
-                    getVoxelShape(facing, BOTTOM_EAST, BOTTOM_SOUTH, BOTTOM_WEST, BOTTOM_NORTH);
+            return !open ? BOTTOM_CLOSED :
+                    getDirectionalShape(facing, BOTTOM_EAST, BOTTOM_SOUTH, BOTTOM_WEST, BOTTOM_NORTH);
         }
     }
 

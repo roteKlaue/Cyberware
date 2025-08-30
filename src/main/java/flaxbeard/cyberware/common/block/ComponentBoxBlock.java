@@ -18,7 +18,6 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -29,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -40,8 +38,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ComponentBoxBlock extends Block implements IWaterLoggable {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+public class ComponentBoxBlock extends DirectionalBlock implements IWaterLoggable {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     private static final VoxelShape SHAPE_NS = Block.box(1, 0, 4, 15, 10, 12);
@@ -50,7 +47,6 @@ public class ComponentBoxBlock extends Block implements IWaterLoggable {
     public ComponentBoxBlock() {
         super(Properties.of(Material.WOOD));
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
                 .setValue(WATERLOGGED, false));
     }
 
@@ -62,11 +58,7 @@ public class ComponentBoxBlock extends Block implements IWaterLoggable {
                                @Nonnull BlockPos pos,
                                @Nonnull ISelectionContext context) {
         Direction facing = state.getValue(FACING);
-        switch (facing) {
-            case NORTH: case SOUTH: return SHAPE_NS;
-            case WEST: case EAST:   return SHAPE_EW;
-            default:    return VoxelShapes.block();
-        }
+        return getDirectionalShape(facing, SHAPE_EW, SHAPE_NS, SHAPE_EW, SHAPE_NS);
     }
 
     @Override
@@ -87,15 +79,14 @@ public class ComponentBoxBlock extends Block implements IWaterLoggable {
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
-        return this.defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection().getOpposite())
+        return super.getStateForPlacement(context)
                 .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
     }
 

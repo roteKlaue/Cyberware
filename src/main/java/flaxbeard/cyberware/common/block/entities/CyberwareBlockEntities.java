@@ -31,6 +31,9 @@ public class CyberwareBlockEntities {
     public static final RegistryObject<TileEntityType<SurgeryChamberBlockEntity>> SURGERY_CHAMBER =
             registerBlockEntity("surgery_chamber", SurgeryChamberBlockEntity::new, CyberwareBlocks.SURGERY_CHAMBER_BLOCK);
 
+    public static final RegistryObject<TileEntityType<ScannerBlockEntity>> SCANNER =
+            registerBlockEntity("scanner", ScannerBlockEntity::new, CyberwareBlocks.SCANNER_BLOCK);
+
     public static <T extends TileEntity, B extends Block>
     RegistryObject<TileEntityType<T>> registerBlockEntity(
             String name,

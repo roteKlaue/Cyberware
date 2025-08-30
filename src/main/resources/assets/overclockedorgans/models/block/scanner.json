@@ -1,8 +1,9 @@
 {
     "parent": "block/block",
     "textures": {
-        "0": "roboticparts:blocks/scanner_side",
-        "1": "roboticparts:blocks/surgery_chamber_top"
+        "0": "overclockedorgans:block/scanner_side",
+        "1": "overclockedorgans:block/surgery_chamber_top",
+        "particle": "overclockedorgans:block/surgery_chamber_top"
     },
     "elements": [
         {

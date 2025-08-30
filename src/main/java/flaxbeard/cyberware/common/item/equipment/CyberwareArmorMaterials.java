@@ -9,6 +9,7 @@ import net.minecraft.util.LazyValue;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 public enum CyberwareArmorMaterials implements IArmorMaterial {
@@ -68,16 +69,19 @@ public enum CyberwareArmorMaterials implements IArmorMaterial {
     }
 
     @Override
+    @Nonnull
     public SoundEvent getEquipSound() {
         return equipSound;
     }
 
     @Override
+    @Nonnull
     public Ingredient getRepairIngredient() {
         return repairIngredient.get();
     }
 
     @Override
+    @Nonnull
     public String getName() {
         return OverclockedOrgans.MOD_ID + ":" + name;
     }

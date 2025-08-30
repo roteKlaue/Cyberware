@@ -34,6 +34,10 @@ public class CyberwareBlocks {
 
     public static final Pair<RegistryObject<BlockItem>, RegistryObject<SurgeryChamberBlock>> SURGERY_CHAMBER_BLOCK = registerBlock("surgery_chamber", SurgeryChamberBlock::new);
 
+    public static final Pair<RegistryObject<BlockItem>, RegistryObject<SurgeryBlock>> SURGERY_BLOCK = registerBlock("surgery", SurgeryBlock::new);
+
+    public static final Pair<RegistryObject<BlockItem>, RegistryObject<ScannerBlock>> SCANNER_BLOCK = registerBlock("scanner", ScannerBlock::new);
+
     public static <T extends Block> Pair<RegistryObject<BlockItem>, RegistryObject<T>> registerBlock(String id, Supplier<T> supplier) {
         RegistryObject<T> block = BLOCKS.register(id.toLowerCase(), supplier);
         return new Pair<>(CyberwareItems.registerBlockItem(id.toLowerCase(), block), block);

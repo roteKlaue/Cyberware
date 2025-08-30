@@ -16,5 +16,10 @@ public class CyberwareRenderers {
                 CyberwareBlockEntities.SURGERY_CHAMBER.get(),
                 SurgeryChamberRenderer::new
         );
+
+        ClientRegistry.bindTileEntityRenderer(
+                CyberwareBlockEntities.SCANNER.get(),
+                ScannerRenderer::new
+        );
     }
 }

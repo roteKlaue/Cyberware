@@ -1,13 +1,8 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model": "overclockedorgans:scanner",
-        "textures": {
-            "particle": "overclockedorgans:blocks/surgery_chamber_top"
-        }
-    },
-    "variants": {
-        "normal": [{}],
-        "inventory": [{}]
-    }
+  "variants": {
+    "facing=north": { "model": "overclockedorgans:block/scanner", "y": 180 },
+    "facing=south": { "model": "overclockedorgans:block/scanner", "y": 0 },
+    "facing=west":  { "model": "overclockedorgans:block/scanner", "y": 90 },
+    "facing=east":  { "model": "overclockedorgans:block/scanner", "y": 270 }
+  }
 }
