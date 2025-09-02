@@ -2,22 +2,36 @@ package flaxbeard.cyberware.common.item;
 
 import flaxbeard.cyberware.api.item.ICyberware;
 import flaxbeard.cyberware.api.item.IDeconstructable;
+import lombok.Builder;
+import lombok.Getter;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.RegistryObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Builder
+@Getter
 public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDeconstructable {
-    private BodySlot[] slots;
-    private int[] essence;
+    private final BodySlot slot;
+    private final int essence;
+    private final @Nonnull List<RegistryObject<Item>> incompatible;
+    private final @Nullable List<RegistryObject<Item>> requirement;
     private final List<RegistryObject<CyberwareBaseItem>> components;
+    private final Quality quality;
 
-    public CyberwareItem(List<RegistryObject<CyberwareBaseItem>> components) {
+    public CyberwareItem(BodySlot slot, int essence,
+                          List<RegistryObject<Item>> incompatible,
+                          @Nullable List<RegistryObject<Item>> requirement,
+                          List<RegistryObject<CyberwareBaseItem>> components,
+                          Quality quality) {
         Objects.requireNonNull(components, "components must not be null");
 
         boolean invalidFound = components.stream()
@@ -27,6 +41,11 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
         }
 
         this.components = new ArrayList<>(components);
+        this.slot = slot;
+        this.essence = essence;
+        this.requirement = requirement;
+        this.incompatible = incompatible;
+        this.quality = quality;
     }
 
     @Override
@@ -46,7 +65,7 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
 
     @Override
     public BodySlot getSlot(ItemStack stack) {
-        return null;
+        return slot;
     }
 
     @Override
@@ -56,7 +75,7 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
 
     @Override
     public NonNullList<NonNullList<ItemStack>> required(ItemStack stack) {
-        return null;
+        return NonNullList.create();
     }
 
     @Override
@@ -80,18 +99,8 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
     }
 
     @Override
-    public Quality getQuality(ItemStack stack) {
-        return null;
-    }
-
-    @Override
-    public ItemStack setQuality(ItemStack stack, Quality quality) {
-        return null;
-    }
-
-    @Override
-    public boolean canHoldQuality(ItemStack stack, Quality quality) {
-        return false;
+    public Quality getQuality() {
+        return quality;
     }
 
     @Override

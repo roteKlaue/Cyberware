@@ -25,6 +25,7 @@ public class ComponentBoxScreen extends ContainerScreen<ComponentBoxContainer> {
     protected void renderBg(@Nonnull MatrixStack matrixStack, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
+        if (this.minecraft == null) return;
         this.minecraft.getTextureManager().bind(TEXTURE);
 
         int i = (this.width - this.imageWidth) / 2;

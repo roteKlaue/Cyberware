@@ -1,8 +1,10 @@
 package flaxbeard.cyberware.common.item;
 
 import flaxbeard.cyberware.OverclockedOrgans;
+import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.item.equipment.CyberwareArmorItem;
 import flaxbeard.cyberware.common.item.equipment.CyberwareArmorMaterials;
+import flaxbeard.cyberware.common.item.equipment.CyberwareItemTiers;
 import flaxbeard.cyberware.common.item.equipment.CyberwareSwordItem;
 
 import net.minecraft.block.Block;
@@ -33,25 +35,16 @@ public class CyberwareItems {
                     .collect(Collectors.toList())
     );
 
-    public static final RegistryObject<CyberwareSwordItem> KATANA = ITEMS.register("katana",
-            () -> new CyberwareSwordItem(ItemTier.DIAMOND,3,-2.4f, new Item.Properties().durability(100)));
-
     public static final RegistryObject<CyberwareBaseItem> CYBER_EYES_MANUFACTURED = ITEMS.register("cybereyes_manufactured",
             TestCyberwareItem::new);
     public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = ITEMS.register("cybereyes_salvaged",
             TestCyberwareItem::makeSalvaged);
 
-    public static final RegistryObject<CyberwareArmorItem> SHADES = registerArmor("shades",
-            CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD);
-
-    public static final RegistryObject<CyberwareArmorItem> SHADES2 = registerArmor("shades2",
-                  CyberwareArmorMaterials.SHADES2, EquipmentSlotType.HEAD);
-
-    public static final RegistryObject<CyberwareArmorItem> JACKET = registerArmor("jacket",
-                  CyberwareArmorMaterials.JACKET, EquipmentSlotType.CHEST);
-
-    public static final RegistryObject<CyberwareArmorItem> TRENCHCOAT = registerArmor("trenchcoat",
-            CyberwareArmorMaterials.TRENCHCOAT, EquipmentSlotType.CHEST);
+    public static RegistryObject<CyberwareSwordItem> KATANA;
+    public static RegistryObject<CyberwareArmorItem> SHADES;
+    public static RegistryObject<CyberwareArmorItem> SHADES2;
+    public static RegistryObject<CyberwareArmorItem> JACKET;
+    public static RegistryObject<CyberwareArmorItem> TRENCHCOAT;
 
     public static final RegistryObject<BlueprintItem> BLUEPRINT = ITEMS.register("blueprint",
             BlueprintItem::new);
@@ -64,6 +57,25 @@ public class CyberwareItems {
             JACKET,
             TRENCHCOAT
     );
+
+
+    static {
+        if (CyberwareConfig.ENABLE_KATANA.get()) {
+            KATANA = ITEMS.register("katana",
+                    () -> new CyberwareSwordItem(CyberwareItemTiers.KATANA,3,-2.4f, new Item.Properties()));
+        }
+
+        if (CyberwareConfig.ENABLE_CLOTHES.get()) {
+            SHADES = registerArmor("shades",
+                    CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD);
+            SHADES2 = registerArmor("shades2",
+                    CyberwareArmorMaterials.SHADES2, EquipmentSlotType.HEAD);
+            JACKET = registerArmor("jacket",
+                    CyberwareArmorMaterials.JACKET, EquipmentSlotType.CHEST);
+            TRENCHCOAT = registerArmor("trenchcoat",
+                    CyberwareArmorMaterials.TRENCHCOAT, EquipmentSlotType.CHEST);
+        }
+    }
 
     public static <T extends Block> RegistryObject<BlockItem> registerBlockItem(String name, RegistryObject<T> block) {
         return registerBlockItem(name, block, BlockItem::new);

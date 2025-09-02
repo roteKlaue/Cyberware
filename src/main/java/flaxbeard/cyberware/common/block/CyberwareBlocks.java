@@ -2,11 +2,12 @@ package flaxbeard.cyberware.common.block;
 
 import com.mojang.datafixers.util.Pair;
 import flaxbeard.cyberware.OverclockedOrgans;
+import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.block.items.ComponentBoxItem;
 import flaxbeard.cyberware.common.item.CyberwareItems;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -22,7 +23,7 @@ public class CyberwareBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, OverclockedOrgans.MOD_ID);
 
     public static final Pair<RegistryObject<BlockItem>, RegistryObject<Block>> TEST_BLOCK = registerBlock("test_block",
-            AbstractBlock.Properties.of(Material.METAL));
+            AbstractBlock.Properties.copy(Blocks.IRON_BLOCK));
 
     public static final Pair<RegistryObject<BlockItem>, RegistryObject<ComponentBoxBlock>> COMPONENT_BOX_BLOCK = registerBlock("component_box", ComponentBoxBlock::new, ComponentBoxItem::new);
 

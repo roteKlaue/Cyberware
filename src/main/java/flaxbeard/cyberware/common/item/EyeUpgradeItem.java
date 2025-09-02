@@ -1,5 +1,6 @@
 package flaxbeard.cyberware.common.item;
 
+import flaxbeard.cyberware.api.CyberwareAPI;
 import flaxbeard.cyberware.api.item.EnableDisableHelper;
 import flaxbeard.cyberware.api.item.IHudjack;
 import flaxbeard.cyberware.api.item.IMenuItem;
@@ -10,15 +11,8 @@ import java.util.ArrayList;
 
 public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
 {
-    public EyeUpgradeItem()
-    {
-        super(new ArrayList<>());
-    }
-
-    @Override
-    public boolean isIncompatible(ItemStack stack, ItemStack other)
-    {
-        return false;
+    public EyeUpgradeItem() {
+        super(BodySlot.EYES, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), CyberwareAPI.QUALITY_MANUFACTURED);
     }
 
     @Override

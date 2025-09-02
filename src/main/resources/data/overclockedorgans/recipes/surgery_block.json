@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    { "type": "cyberware:config_enabled", "key": "surgery_crafting" }
+  ],
+  "pattern": [
+    "III",
+    "IRI",
+    "PSA"
+  ],
+  "key": {
+    "I": { "tag": "forge:ingots/iron" },
+    "R": { "item": "minecraft:redstone_block" },
+    "P": { "item": "minecraft:diamond_pickaxe" },
+    "S": { "item": "minecraft:diamond_sword" },
+    "A": { "item": "minecraft:diamond_axe" }
+  },
+  "result": {
+    "item": "cyberware:surgery_apparatus"
+  }
+}

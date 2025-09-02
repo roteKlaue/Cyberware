@@ -61,13 +61,16 @@ public class ComponentBoxContainer extends Container {
                 tmpItems = NonNullList.withSize(18, ItemStack.EMPTY);
                 ItemStackHelper.loadAllItems(beTag, tmpItems);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
 
         this.tileEntity = be;
         this.items = tmpItems;
-        this.numRows = (this.tileEntity != null) ? this.tileEntity.getContainerSize() / 9 : (this.items.size() / 9);
+        if ((this.tileEntity != null)) {
+            this.numRows = this.tileEntity.getContainerSize() / 9;
+        } else {
+            assert this.items != null;
+            this.numRows = (this.items.size() / 9);
+        }
 
         // Build slots using an IInventory wrapper that points to either the tile entity or our tmpItems
         if (this.tileEntity != null) {

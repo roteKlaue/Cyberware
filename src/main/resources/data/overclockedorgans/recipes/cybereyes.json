@@ -1,0 +1,14 @@
+{
+  "type": "overclockedorgans:engineering",
+  "blueprint": "overclockedorgans:cybereyes_manufactured",
+  "parts": [
+    {
+      "item": { "item": "minecraft:iron_ingot" },
+      "amount": 2
+    },
+    {
+      "item": { "item": "minecraft:redstone" },
+      "amount": 1
+    }
+  ]
+}

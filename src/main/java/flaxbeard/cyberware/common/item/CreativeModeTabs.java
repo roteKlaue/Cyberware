@@ -1,6 +1,7 @@
 package flaxbeard.cyberware.common.item;
 
 import flaxbeard.cyberware.OverclockedOrgans;
+import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.block.CyberwareBlocks;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -27,15 +28,7 @@ public class CreativeModeTabs {
         }
     };
 
-    public static final ItemGroup EQUIPMENT_GROUP = new ItemGroup(OverclockedOrgans.MOD_ID + ".equipmentModTab")
-    {
-        @Override
-        @Nonnull
-        public ItemStack makeIcon()
-        {
-            return new ItemStack(CyberwareItems.KATANA.get());
-        }
-    };
+    public static ItemGroup EQUIPMENT_GROUP;
 
     public static final ItemGroup BLOCK_GROUP = new ItemGroup(OverclockedOrgans.MOD_ID + ".blockModTab")
     {
@@ -46,4 +39,21 @@ public class CreativeModeTabs {
             return new ItemStack(CyberwareBlocks.COMPONENT_BOX_BLOCK.getFirst().get());
         }
     };
+
+    static {
+        boolean katanaEnabled = CyberwareConfig.ENABLE_KATANA.get();
+        if (katanaEnabled || CyberwareConfig.ENABLE_CLOTHES.get()) {
+            EQUIPMENT_GROUP = new ItemGroup(OverclockedOrgans.MOD_ID + ".equipmentModTab")
+            {
+                @Override
+                @Nonnull
+                public ItemStack makeIcon()
+                {
+                    return new ItemStack(katanaEnabled
+                            ? CyberwareItems.KATANA.get()
+                            : CyberwareItems.JACKET.get());
+                }
+            };
+        }
+    }
 }

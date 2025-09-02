@@ -38,7 +38,7 @@ public class ScannerModel {
     }
 
     public void renderBeam(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay) {
-        this.beam.render(matrixStack, buffer, packedLight, packedOverlay);
+        this.beam.render(matrixStack, buffer, packedLight, packedOverlay, 1.0f, 1.0f, 1.0f, 0.1f);
     }
 
     public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {

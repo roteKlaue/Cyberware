@@ -10,25 +10,25 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nonnull;
+
 public class CyberwareSwordItem extends SwordItem implements IDeconstructable {
     public CyberwareSwordItem(IItemTier itemTier, int damageModifier, float attackSpeed, Properties properties) {
         super(itemTier, damageModifier, attackSpeed, properties.tab(CreativeModeTabs.EQUIPMENT_GROUP));
     }
 
     @Override
-    public boolean canDestroy(ItemStack stack)
-    {
+    public boolean canDestroy(ItemStack stack) {
         return true;
     }
 
     @Override
-    public NonNullList<ItemStack> getComponents(ItemStack stack)
-    {
-        return NNLUtil.fromArray(new ItemStack[]
-                {
-                        new ItemStack(Items.IRON_INGOT, 2),
-                        new ItemStack(CyberwareItems.COMPONENT.get(2).get(), 1),
-                        new ItemStack(CyberwareItems.COMPONENT.get(4).get(), 1)
-                });
+    @Nonnull
+    public NonNullList<ItemStack> getComponents(ItemStack stack) {
+        return NNLUtil.fromArray(new ItemStack[] {
+                new ItemStack(Items.IRON_INGOT, 2),
+                new ItemStack(CyberwareItems.COMPONENT.get(2).get(), 1),
+                new ItemStack(CyberwareItems.COMPONENT.get(4).get(), 1)
+        });
     }
 }

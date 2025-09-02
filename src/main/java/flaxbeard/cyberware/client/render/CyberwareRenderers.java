@@ -21,5 +21,10 @@ public class CyberwareRenderers {
                 CyberwareBlockEntities.SCANNER.get(),
                 ScannerRenderer::new
         );
+
+        ClientRegistry.bindTileEntityRenderer(
+                CyberwareBlockEntities.ENGINEERING_TABLE.get(),
+                EngineeringTableRenderer::new
+        );
     }
 }

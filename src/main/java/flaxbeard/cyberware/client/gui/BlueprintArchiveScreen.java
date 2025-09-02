@@ -25,6 +25,7 @@ public class BlueprintArchiveScreen extends ContainerScreen<BlueprintArchiveCont
 
     @Override
     protected void renderBg(@Nonnull MatrixStack matrixStack, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
+        if (this.minecraft == null) return;
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         this.minecraft.getTextureManager().bind(TEXTURE);

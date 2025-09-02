@@ -5,6 +5,7 @@ import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
@@ -45,7 +46,7 @@ public class ComponentBoxBlock extends DirectionalBlock implements IWaterLoggabl
     private static final VoxelShape SHAPE_EW = Block.box(4, 0, 1, 12, 10, 15);
 
     public ComponentBoxBlock() {
-        super(Properties.of(Material.WOOD));
+        super(Properties.copy(Blocks.IRON_BLOCK));
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(WATERLOGGED, false));
     }

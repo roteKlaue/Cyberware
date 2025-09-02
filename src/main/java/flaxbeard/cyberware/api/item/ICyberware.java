@@ -1,5 +1,6 @@
 package flaxbeard.cyberware.api.item;
 
+import lombok.Getter;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -26,13 +27,9 @@ public interface ICyberware
      * this is just for the tooltip and external factors. See CyberwareAPI for
      * the base Qualities.
      *
-     * @param stack	The ItemStack to check
      * @return		An instance of Quality
      */
-    Quality getQuality(ItemStack stack);
-
-    ItemStack setQuality(ItemStack stack, Quality quality);
-    boolean canHoldQuality(ItemStack stack, Quality quality);
+    Quality getQuality();
 
     class Quality
     {
@@ -96,7 +93,9 @@ public interface ICyberware
         LEG(23, "leg", true, true),
         FOOT(24, "foot", true, false);
 
+        @Getter
         private final int slotNumber;
+        @Getter
         private final String name;
         private final boolean sidedSlot;
         private final boolean hasEssential;
@@ -114,11 +113,6 @@ public interface ICyberware
             this(slot, name, false, true);
         }
 
-        public int getSlotNumber()
-        {
-            return slotNumber;
-        }
-
         public static BodySlot getSlotByPage(int page)
         {
             for (BodySlot slot : values())
@@ -129,11 +123,6 @@ public interface ICyberware
                 }
             }
             return null;
-        }
-
-        public String getName()
-        {
-            return name;
         }
 
         public boolean isSided()

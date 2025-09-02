@@ -1,26 +1,19 @@
 package flaxbeard.cyberware.common.block.entities;
 
-import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.api.CyberwareAPI;
 import flaxbeard.cyberware.client.gui.ScannerContainer;
 import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.item.BlueprintItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -28,11 +21,10 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class ScannerBlockEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
-    public static class ItemStackHandlerScanner extends ItemStackHandler {
-        public ItemStackHandlerScanner(int size) {
+public class ScannerBlockEntity extends NameContainerProvider<ScannerBlockEntity> implements ITickableTileEntity {
+    public static class ScannerItemStackHandler extends ItemStackHandler {
+        public ScannerItemStackHandler(int size) {
             super(size);
         }
 
@@ -58,7 +50,7 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
         }
     }
 
-    public final ItemStackHandlerScanner slots = new ItemStackHandlerScanner(3);
+    public final ScannerItemStackHandler slots = new ScannerItemStackHandler(3);
     private final RangedWrapper slotsTopSides = new RangedWrapper(slots, 0, 2);
     private final RangedWrapper slotsBottom = new RangedWrapper(slots, 2, 3);
     private final RangedWrapper slotsBottom2 = new RangedWrapper(slots, 0, 1);
@@ -72,7 +64,6 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
         }
     });
 
-    public ITextComponent customName = null;
     public int ticks = 0;
     public int ticksMove = 0;
     public int lastX = 0;
@@ -81,12 +72,13 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
     public int z = 0;
 
     public ScannerBlockEntity() {
-        super(CyberwareBlockEntities.SCANNER.get());
+        super(CyberwareBlockEntities.SCANNER.get(), "scanner",
+                ScannerContainer::new, ScannerBlockEntity.class);
     }
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (side == Direction.DOWN) {
                 return bottomCap.cast();
@@ -102,11 +94,6 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
                      @Nonnull CompoundNBT tag) {
         super.load(state, tag);
         slots.deserializeNBT(tag.getCompound("inv"));
-
-        if (tag.contains("CustomName", 8)) {
-            customName = new StringTextComponent(tag.getString("CustomName"));
-        }
-
         ticks = tag.getInt("ticks");
     }
 
@@ -115,9 +102,6 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
     public CompoundNBT save(@Nonnull CompoundNBT tag) {
         super.save(tag);
         tag.put("inv", slots.serializeNBT());
-        if (hasCustomName()) {
-            tag.putString("CustomName", customName.getString());
-        }
         tag.putInt("ticks", ticks);
         return tag;
     }
@@ -148,30 +132,13 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
                         this.worldPosition.getZ() + 0.5D) <= 64.0D;
     }
 
-    public ITextComponent getName() {
-        return hasCustomName() ? customName : new TranslationTextComponent("container." + OverclockedOrgans.MOD_ID + ".scanner");
-    }
-
-    public boolean hasCustomName() {
-        return customName != null && !customName.getString().isEmpty();
-    }
-
-    public void setCustomInventoryName(ITextComponent name) {
-        this.customName = name;
-    }
-
-    @Override
-    @Nonnull
-    public ITextComponent getDisplayName() {
-        return getName();
-    }
-
     @Override
     public void tick() {
         ItemStack toDestroy = slots.getStackInSlot(0);
         if (CyberwareAPI.canDeconstruct(toDestroy)
                 && toDestroy.getCount() > 0
                 && slots.getStackInSlot(2).isEmpty()) {
+            if (this.level == null) return;
             ticks++;
 
             if (ticksMove > ticks
@@ -219,14 +186,6 @@ public class ScannerBlockEntity extends TileEntity implements ITickableTileEntit
 
     public float getProgress() {
         return (ticks * 1F) / CyberwareConfig.SCANNER_TIME.get();
-    }
-
-    @Nullable
-    @Override
-    public Container createMenu(int id,
-                                @Nonnull PlayerInventory inventory,
-                                @Nonnull PlayerEntity entity) {
-        return new ScannerContainer(id, inventory, this);
     }
 
     public float calculateChance() {
