@@ -1,6 +1,7 @@
 package flaxbeard.cyberware.common.block.entities;
 
 import flaxbeard.cyberware.OverclockedOrgans;
+import lombok.Setter;
 import net.minecraft.block.BlockState;
 import net.minecraft.data.BlockStateVariantBuilder;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class NameContainerProvider<T extends NameContainerProvider<T>> extends TileEntity implements INamedContainerProvider {
+    @Setter
     public ITextComponent customName = null;
     private final String cachedKey;
     private final BlockStateVariantBuilder.ITriFunction<Integer, PlayerInventory, T, Container> container;
@@ -55,10 +57,6 @@ public class NameContainerProvider<T extends NameContainerProvider<T>> extends T
 
     public boolean hasCustomName() {
         return customName != null;
-    }
-
-    public void setCustomName(ITextComponent customName) {
-        this.customName = customName;
     }
 
     @Override

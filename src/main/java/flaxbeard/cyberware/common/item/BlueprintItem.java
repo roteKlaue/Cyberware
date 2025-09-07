@@ -2,6 +2,7 @@ package flaxbeard.cyberware.common.item;
 
 import flaxbeard.cyberware.api.CyberwareAPI;
 import flaxbeard.cyberware.api.item.IBlueprint;
+import flaxbeard.cyberware.api.item.IDeconstructable;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -35,12 +36,11 @@ public class BlueprintItem extends Item implements IBlueprint {
 
     public static ItemStack makeBlueprint(ItemStack stack) {
         if (!stack.isEmpty() && CyberwareAPI.canDeconstruct(stack)) {
-            ItemStack toBlue = stack.copy();
+            if (!(stack.getItem() instanceof IDeconstructable)) return ItemStack.EMPTY;
 
-            toBlue.setCount(1);
-            if (toBlue.isDamageableItem()) {
-                toBlue.setDamageValue(0);
-            }
+            IDeconstructable itemToPutIntoBlueprint = (IDeconstructable) stack.getItem();
+
+            ItemStack toBlue = new  ItemStack((Item) itemToPutIntoBlueprint, 1);
             toBlue.setTag(null);
 
             ItemStack ret = new ItemStack(CyberwareItems.BLUEPRINT.get());

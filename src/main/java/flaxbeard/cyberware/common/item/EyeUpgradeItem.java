@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
 {
     public EyeUpgradeItem() {
-        super(BodySlot.EYES, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), CyberwareAPI.QUALITY_MANUFACTURED);
+        super(BodySlot.EYES, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     @Override

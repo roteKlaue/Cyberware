@@ -18,6 +18,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nonnull;
 
@@ -46,18 +47,24 @@ public class EngineeringTableRenderer extends TileEntityRenderer<EngineeringTabl
 
         boolean showIcon = true;
         float amount;
+
         if (timeElapsed < 2F) {
             amount = timeElapsed / 2F;
         } else {
             timeElapsed -= 2F;
-            if (timeElapsed < 15F) showIcon = false;
+
+            if (timeElapsed < 15F) {
+                showIcon = false;
+            }
+
             amount = 1F - (timeElapsed / 20F);
         }
 
+        ms.pushPose();
         ms.translate(0.0D, amount * (-6F / 16F), 0.0D);
-
         IVertexBuilder vb = buffer.getBuffer(RenderType.entityCutout(TEXTURE));
         model.renderToBuffer(ms, vb, combinedLight, combinedOverlay, 1f, 1f, 1f, 1f);
+        ms.popPose();
 
         ItemStack stack = te.slots.getStackInSlot(0);
         if (!stack.isEmpty() && showIcon) {

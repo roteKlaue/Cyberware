@@ -2,6 +2,7 @@ package flaxbeard.cyberware.client.gui;
 
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
+import flaxbeard.cyberware.common.block.entities.EngineeringTableBlockEntity;
 import flaxbeard.cyberware.common.block.entities.ScannerBlockEntity;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
@@ -44,6 +45,17 @@ public class CyberwareContainers {
                         return null;
                     }));
 
+    public static final RegistryObject<ContainerType<EngineeringTableContainer>> ENGINEERING =
+            CONTAINERS.register("engineering",
+                    () -> IForgeContainerType.create((windowId, inv, data) -> {
+                        BlockPos pos = data.readBlockPos();
+                        TileEntity tile = inv.player.level.getBlockEntity(pos);
+                        if (tile instanceof EngineeringTableBlockEntity) {
+                            return new EngineeringTableContainer(windowId, inv, (EngineeringTableBlockEntity) tile);
+                        }
+                        return null;
+                    }));
+
 
     public static void register(IEventBus bus) {
         CONTAINERS.register(bus);
@@ -54,5 +66,6 @@ public class CyberwareContainers {
         ScreenManager.register(CyberwareContainers.COMPONENT_BOX.get(), ComponentBoxScreen::new);
         ScreenManager.register(CyberwareContainers.BLUEPRINT_ARCHIVE.get(), BlueprintArchiveScreen::new);
         ScreenManager.register(CyberwareContainers.SCANNER.get(), ScannerScreen::new);
+        ScreenManager.register(CyberwareContainers.ENGINEERING.get(), EngineeringTableScreen::new);
     }
 }

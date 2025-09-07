@@ -1,5 +1,6 @@
 package flaxbeard.cyberware.common.block;
 
+import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.block.entities.EngineeringTableBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -64,6 +65,7 @@ public class EngineeringTableBlock extends TallBlock<EngineeringTableBlockEntity
                 ((EngineeringTableBlockEntity) tile).setCustomName(stack.getHoverName());
             }
         }
+        super.setPlacedBy(world, pos, state, placer, stack);
     }
 
     @Override
@@ -93,11 +95,12 @@ public class EngineeringTableBlock extends TallBlock<EngineeringTableBlockEntity
                                 @Nonnull BlockRayTraceResult result) {
         if (world.isClientSide) return ActionResultType.PASS;
 
-        if (world.getBlockEntity(position) instanceof INamedContainerProvider) {
-            BlockPos pos = isTop(state) ? position
-                    : position.above();
-            INamedContainerProvider provider = (INamedContainerProvider) world.getBlockEntity(pos);
-            NetworkHooks.openGui((ServerPlayerEntity) player, provider, position);
+        BlockPos pos = isTop(state) ? position
+                : position.above();
+        TileEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof EngineeringTableBlockEntity) {
+            EngineeringTableBlockEntity provider = (EngineeringTableBlockEntity) tile;
+            NetworkHooks.openGui((ServerPlayerEntity) player, provider, pos);
             return ActionResultType.SUCCESS;
         }
 

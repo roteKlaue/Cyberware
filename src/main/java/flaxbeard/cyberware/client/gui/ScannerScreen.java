@@ -9,7 +9,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -108,7 +108,7 @@ public class ScannerScreen extends ContainerScreen<ScannerContainer> {
             int ticksLeft = CyberwareConfig.SCANNER_TIME.get() - this.menu.scanner.ticks;
             int seconds = (ticksLeft % 1200) / 20;
             int minutes = (ticksLeft / 1200);
-            ITextComponent timeLeft = new StringTextComponent(I18n.get("gui.overclockedorgans.time_left", minutes, seconds));
+            ITextComponent timeLeft = new TranslationTextComponent("gui.overclockedorgans.time_left", minutes, seconds);
 
             this.renderTooltip(matrixStack, timeLeft, mouseX, mouseY);
         }
