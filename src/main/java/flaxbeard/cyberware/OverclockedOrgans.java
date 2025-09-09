@@ -4,6 +4,8 @@ import flaxbeard.cyberware.client.gui.CyberwareContainers;
 import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.block.CyberwareBlocks;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
+import flaxbeard.cyberware.common.effect.CyberwarePotionEffects;
+import flaxbeard.cyberware.common.entity.CyberwareEntities;
 import flaxbeard.cyberware.common.item.CyberwareItems;
 import flaxbeard.cyberware.common.misc.CyberwareRecipeSerializers;
 import flaxbeard.cyberware.common.network.CyberwarePackets;
@@ -42,22 +44,18 @@ public class OverclockedOrgans {
         CyberwareBlockEntities.register(eventBus);
         CyberwareContainers.register(eventBus);
         CyberwareRecipeSerializers.register(eventBus);
+        CyberwarePotionEffects.register(eventBus);
+        CyberwareEntities.register(eventBus);
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::enqueueIMC);
         eventBus.addListener(this::processIMC);
-        eventBus.addListener(this::clientSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         CyberwarePackets.register();
-    }
-
-    private void clientSetup(final FMLClientSetupEvent event) {
-        CyberwareContainers.initScreens();
-        registerItemProperties();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}
@@ -72,20 +70,4 @@ public class OverclockedOrgans {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {}
     }
-
-    @OnlyIn(Dist.CLIENT)
-    public static void registerItemProperties() {
-        ItemModelsProperties.register(
-                CyberwareItems.BLUEPRINT.get(),
-                new ResourceLocation("blueprint_type"),
-                (stack, world, entity) -> {
-                    if (stack.hasTag() && stack.getTag() != null && stack.getTag().contains("BlueprintId")) {
-                        String id = stack.getTag().getString("BlueprintId");
-                        return id.equals("empty") ? 1f : 0f;
-                    }
-                    return 0f;
-                }
-        );
-    }
-
 }
