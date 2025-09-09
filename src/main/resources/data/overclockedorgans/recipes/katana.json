@@ -1,13 +1,13 @@
 {
   "type": "overclockedorgans:engineering",
-  "blueprint": "overclockedorgans:cybereyes_manufactured",
+  "blueprint": "overclockedorgans:katana",
   "parts": [
     {
-      "item": { "item": "overclockedorgans:fiberoptics" },
+      "item": { "item": "minecraft:iron_ingot" },
       "amount": 2
     },
     {
-      "item": { "item": "overclockedorgans:synthnerves" },
+      "item": { "item": "overclockedorgans:titanium" },
       "amount": 1
     },
     {

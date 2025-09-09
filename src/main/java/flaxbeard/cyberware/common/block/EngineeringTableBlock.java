@@ -1,6 +1,5 @@
 package flaxbeard.cyberware.common.block;
 
-import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.block.entities.EngineeringTableBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -8,7 +7,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;

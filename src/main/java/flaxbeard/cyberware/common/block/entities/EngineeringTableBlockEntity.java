@@ -8,7 +8,6 @@ import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.item.BlueprintItem;
 import flaxbeard.cyberware.common.item.CyberwareItems;
 import flaxbeard.cyberware.common.misc.recipe.EngineeringRecipe;
-import flaxbeard.cyberware.common.misc.recipe.IngredientWithAmount;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
@@ -21,7 +20,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -34,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class EngineeringTableBlockEntity extends NameContainerProvider<EngineeringTableBlockEntity> implements ITickableTileEntity {
+public class EngineeringTableBlockEntity extends NameContainerProvider<EngineeringTableBlockEntity> {
     private static final int SLOT_COUNT = 10;
     public final EngineeringTableItemStackHandler slots = new EngineeringTableItemStackHandler(this);
 
@@ -43,11 +41,6 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
     public EngineeringTableBlockEntity() {
         super(CyberwareBlockEntities.ENGINEERING_TABLE.get(), "engineering_table",
                 EngineeringTableContainer::new, EngineeringTableBlockEntity.class);
-    }
-
-    @Override
-    public void tick() {
-        if (level == null || level.isClientSide) return;
     }
 
     @Override
@@ -62,7 +55,6 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
             clickedTime = tag.getFloat("clickedTime");
         }
     }
-
 
     @Override
     @Nonnull

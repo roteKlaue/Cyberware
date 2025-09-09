@@ -21,10 +21,14 @@ public class IngredientWithAmount {
         return ingredient.test(stack);
     }
 
-    public void consume(ItemStack stack) {
+    public int consume(ItemStack stack) {
         int needed = amount - matched;
+        if (needed <= 0 || stack.isEmpty()) return 0;
+
         int take = Math.min(stack.getCount(), needed);
         matched += take;
+        stack.shrink(take);
+        return take;
     }
 
     public boolean isSatisfied() {

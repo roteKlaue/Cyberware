@@ -3,15 +3,13 @@ package flaxbeard.cyberware.common.misc.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.item.BlueprintItem;
 import lombok.Getter;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.NonNullList;
@@ -24,6 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EngineeringRecipe implements IRecipe<IInventory> {
@@ -49,27 +48,38 @@ public class EngineeringRecipe implements IRecipe<IInventory> {
             inputs.add(stack.copy());
         }
 
-        if (inputs.get(6).isEmpty() || !(inputs.get(6).getItem() instanceof BlueprintItem)) {
+        ItemStack blueprintStack = inputs.get(6);
+        Item blueprintItem = blueprintStack.getItem();
+
+        if (blueprintStack.isEmpty()
+                || !(blueprintItem instanceof BlueprintItem)
+                || !((BlueprintItem) blueprintItem).getResult(blueprintStack)
+                    .getItem().equals(resultItem)) {
             return false;
         }
 
         inputs.remove(6);
+
         List<IngredientWithAmount> required = new ArrayList<>();
         for (IngredientWithAmount p : parts) {
             required.add(new IngredientWithAmount(p.getIngredient(), p.getAmount()));
         }
 
         for (ItemStack stack : inputs) {
+            if (stack.isEmpty()) continue;
+
             for (IngredientWithAmount req : required) {
+                if (stack.isEmpty()) break;
+                if (req.isSatisfied()) continue;
                 if (req.matches(stack)) {
                     req.consume(stack);
-                    break;
                 }
             }
         }
 
         return required.stream().allMatch(IngredientWithAmount::isSatisfied);
     }
+
 
     @Override
     @Nonnull
@@ -98,16 +108,36 @@ public class EngineeringRecipe implements IRecipe<IInventory> {
         return Serializer.INSTANCE;
     }
 
-    @Override
     @Nonnull
     public NonNullList<ItemStack> getRemainingItems(@Nonnull IInventory inv) {
         NonNullList<ItemStack> remaining = NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
 
+        List<IngredientWithAmount> required = new ArrayList<>();
+        for (IngredientWithAmount p : parts) {
+            required.add(new IngredientWithAmount(p.getIngredient(), p.getAmount()));
+        }
+
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
+            if (stack.isEmpty()) continue;
 
             if (stack.getItem() instanceof BlueprintItem) {
                 remaining.set(i, stack.copy());
+                continue;
+            }
+
+            ItemStack copy = stack.copy();
+
+            for (IngredientWithAmount req : required) {
+                if (copy.isEmpty()) break;
+                if (req.isSatisfied()) continue;
+                if (req.matches(copy)) {
+                    req.consume(copy);
+                }
+            }
+
+            if (!copy.isEmpty()) {
+                remaining.set(i, copy);
             }
         }
 
@@ -179,5 +209,19 @@ public class EngineeringRecipe implements IRecipe<IInventory> {
                 buf.writeVarInt(part.getAmount());
             }
         }
+    }
+
+    public static Optional<EngineeringRecipe> findByBlueprint(@Nonnull World world, @Nonnull ItemStack blueprintStack) {
+        if (blueprintStack.isEmpty() || !(blueprintStack.getItem() instanceof BlueprintItem)) {
+            return Optional.empty();
+        }
+
+        BlueprintItem blueprintItem = (BlueprintItem) blueprintStack.getItem();
+        Item targetResult = blueprintItem.getResult(blueprintStack).getItem();
+
+        RecipeManager manager = world.getRecipeManager();
+        return manager.getAllRecipesFor(EngineeringRecipe.Type.INSTANCE).stream()
+                .filter(recipe -> recipe.getResultItem().getItem().equals(targetResult))
+                .findFirst();
     }
 }

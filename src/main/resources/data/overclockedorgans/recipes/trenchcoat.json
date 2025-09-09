@@ -1,0 +1,18 @@
+{
+  "type": "overclockedorgans:engineering",
+  "blueprint": "overclockedorgans:trenchcoat",
+  "parts": [
+    {
+      "item": { "item": "minecraft:leather" },
+      "amount": 12
+    },
+    {
+      "item": { "item": "overclockedorgans:titanium" },
+      "amount": 2
+    },
+    {
+      "item": { "item": "minecraft:black_dye" },
+      "amount": 1
+    }
+  ]
+}

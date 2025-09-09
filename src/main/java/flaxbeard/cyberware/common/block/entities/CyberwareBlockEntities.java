@@ -41,11 +41,11 @@ public class CyberwareBlockEntities {
     RegistryObject<TileEntityType<T>> registerBlockEntity(
             String name,
             Supplier<T> supplier,
-            Pair<RegistryObject<BlockItem>, RegistryObject<B>> item
+            CyberwareBlocks.RegisteredBlock<B> item
     ) {
         return BLOCK_ENTITIES.register(
                 name.toLowerCase(),
-                () -> TileEntityType.Builder.of(supplier, item.getSecond().get()).build(null)
+                () -> TileEntityType.Builder.of(supplier, item.getBlock().get()).build(null)
         );
     }
 

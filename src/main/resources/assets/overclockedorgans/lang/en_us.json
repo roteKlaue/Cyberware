@@ -90,6 +90,11 @@
   "item.overclockedorgans.jacket": "Biker Jacket",
   "item.overclockedorgans.trenchcoat": "Trenchcoat",
 
+  "tooltip.overclockedorgans.blueprint.empty": "Craft with a piece of Cyberware",
+  "tooltip.overclockedorgans.blueprint": "Creates %1$s",
+  "tooltip.overclockedorgans.blueprint.ingredient": "%2$s x %1$s",
+  "tooltip.overclockedorgans.shift_prompt": "Hold SNEAK for more info",
+
   "block.overclockedorgans.component_box": "Component Box",
   "block.overclockedorgans.engineering_table": "Engineering Table",
   "block.overclockedorgans.blueprint_archive": "Blueprint Archive",

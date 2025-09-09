@@ -1,0 +1,14 @@
+{
+  "type": "overclockedorgans:engineering",
+  "blueprint": "overclockedorgans:shades",
+  "parts": [
+    {
+      "item": { "item": "overclockedorgans:plating" },
+      "amount": 1
+    },
+    {
+      "item": { "item": "minecraft:black_stained_glass" },
+      "amount": 4
+    }
+  ]
+}

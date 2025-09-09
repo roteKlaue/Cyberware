@@ -37,7 +37,7 @@ public class EngineeringTableRenderer extends TileEntityRenderer<EngineeringTabl
         if (te.getLevel() == null) return;
 
         BlockState state = te.getBlockState();
-        if (state.getBlock() != CyberwareBlocks.ENGINEERING_TABLE_BLOCK.getSecond().get()) return;
+        if (state.getBlock() != CyberwareBlocks.ENGINEERING_TABLE_BLOCK.getBlock().get()) return;
 
         ms.pushPose();
         ms.translate(0.5D, 0.5D, 0.5D);
