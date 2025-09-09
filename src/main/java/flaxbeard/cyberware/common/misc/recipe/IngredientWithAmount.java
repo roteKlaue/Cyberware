@@ -1,10 +1,13 @@
 package flaxbeard.cyberware.common.misc.recipe;
 
+import lombok.Getter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 
 public class IngredientWithAmount {
+    @Getter
     private final Ingredient ingredient;
+    @Getter
     private final int amount;
     private int matched;
 
@@ -27,7 +30,4 @@ public class IngredientWithAmount {
     public boolean isSatisfied() {
         return matched >= amount;
     }
-
-    public Ingredient getIngredient() { return ingredient; }
-    public int getAmount() { return amount; }
 }

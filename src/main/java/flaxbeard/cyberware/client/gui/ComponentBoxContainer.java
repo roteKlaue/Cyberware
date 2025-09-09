@@ -28,7 +28,7 @@ public class ComponentBoxContainer extends Container {
 
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
-            return CyberwareItems.COMPONENT.stream().anyMatch(r -> r.get() == stack.getItem());
+            return CyberwareItems.COMPONENTS.stream().anyMatch(r -> r.get() == stack.getItem());
         }
     }
 

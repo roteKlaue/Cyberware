@@ -3,16 +3,13 @@ package flaxbeard.cyberware.common.item;
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.api.item.ICyberware;
 import flaxbeard.cyberware.api.item.IDeconstructable;
-import lombok.Builder;
 import lombok.Getter;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -48,7 +45,7 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
         Objects.requireNonNull(components, "components must not be null");
 
         boolean invalidFound = components.stream()
-                .anyMatch(c -> !CyberwareItems.COMPONENT.contains(c));
+                .anyMatch(c -> !CyberwareItems.COMPONENTS.contains(c));
         if (invalidFound) {
             throw new IllegalArgumentException("CyberwareItem may only consist of registered components.");
         }

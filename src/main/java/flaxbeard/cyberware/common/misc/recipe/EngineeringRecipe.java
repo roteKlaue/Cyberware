@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import flaxbeard.cyberware.common.item.BlueprintItem;
+import lombok.Getter;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EngineeringRecipe implements IRecipe<IInventory> {
     private final @Nonnull ResourceLocation id;
     private final Item resultItem;
+    @Getter
     private final List<IngredientWithAmount> parts;
 
     public EngineeringRecipe(@Nonnull ResourceLocation id,
@@ -44,40 +46,25 @@ public class EngineeringRecipe implements IRecipe<IInventory> {
 
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (!stack.isEmpty()) {
-                inputs.add(stack.copy());
-            }
+            inputs.add(stack.copy());
         }
 
-        AtomicInteger blueprintCount = new AtomicInteger();
-        inputs.removeIf(stack -> {
-            if (stack.getItem() instanceof BlueprintItem) {
-                blueprintCount.getAndIncrement();
-                return true;
-            }
-            return false;
-        });
-
-        if (blueprintCount.get() != 1) {
+        if (inputs.get(6).isEmpty() || !(inputs.get(6).getItem() instanceof BlueprintItem)) {
             return false;
         }
 
+        inputs.remove(6);
         List<IngredientWithAmount> required = new ArrayList<>();
         for (IngredientWithAmount p : parts) {
             required.add(new IngredientWithAmount(p.getIngredient(), p.getAmount()));
         }
 
         for (ItemStack stack : inputs) {
-            boolean matched = false;
             for (IngredientWithAmount req : required) {
                 if (req.matches(stack)) {
                     req.consume(stack);
-                    matched = true;
                     break;
                 }
-            }
-            if (!matched) {
-                return false;
             }
         }
 
@@ -87,8 +74,7 @@ public class EngineeringRecipe implements IRecipe<IInventory> {
     @Override
     @Nonnull
     public ItemStack assemble(@Nonnull IInventory inv) {
-        ItemStack result = BlueprintItem.makeBlueprint(new ItemStack(resultItem));
-        return result.copy();
+        return new ItemStack(resultItem);
     }
 
     @Override

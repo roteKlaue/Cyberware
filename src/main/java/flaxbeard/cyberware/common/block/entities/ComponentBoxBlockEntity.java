@@ -60,7 +60,7 @@ public class ComponentBoxBlockEntity extends LockableTileEntity {
 
     @Override
     public void setItem(int index, @Nonnull ItemStack stack) {
-        if (CyberwareItems.COMPONENT.stream().anyMatch(r -> r.get() == stack.getItem())) {
+        if (CyberwareItems.COMPONENTS.stream().anyMatch(r -> r.get() == stack.getItem())) {
             items.set(index, stack);
             if (stack.getCount() > getMaxStackSize()) stack.setCount(getMaxStackSize());
             setChanged();

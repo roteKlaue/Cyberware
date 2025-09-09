@@ -27,8 +27,8 @@ public class CyberwareSwordItem extends SwordItem implements IDeconstructable {
     public NonNullList<ItemStack> getComponents(ItemStack stack) {
         return NNLUtil.fromArray(new ItemStack[] {
                 new ItemStack(Items.IRON_INGOT, 2),
-                new ItemStack(CyberwareItems.COMPONENT.get(2).get(), 1),
-                new ItemStack(CyberwareItems.COMPONENT.get(4).get(), 1)
+                new ItemStack(CyberwareItems.COMPONENTS.get(2).get(), 1),
+                new ItemStack(CyberwareItems.COMPONENTS.get(4).get(), 1)
         });
     }
 }

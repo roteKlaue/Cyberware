@@ -1,18 +1,25 @@
 package flaxbeard.cyberware.common.item;
 
-import flaxbeard.cyberware.api.CyberwareAPI;
 import flaxbeard.cyberware.api.item.EnableDisableHelper;
 import flaxbeard.cyberware.api.item.IHudjack;
 import flaxbeard.cyberware.api.item.IMenuItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.RegistryObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
-{
+public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack {
+    public static List<RegistryObject<CyberwareBaseItem>> ingredients = new ArrayList<>();
+
+    static {
+        ingredients.add(CyberwareItems.COMPONENTS.get(0));
+        ingredients.add(CyberwareItems.COMPONENTS.get(1));
+    }
+
     public EyeUpgradeItem() {
-        super(BodySlot.EYES, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        super(BodySlot.EYES, 0, new ArrayList<>(), new ArrayList<>(), ingredients);
     }
 
     @Override

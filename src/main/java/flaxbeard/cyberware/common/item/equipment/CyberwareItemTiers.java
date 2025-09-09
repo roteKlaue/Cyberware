@@ -14,7 +14,7 @@ public enum CyberwareItemTiers implements IItemTier {
             ItemTier.DIAMOND.getAttackDamageBonus(),
             ItemTier.IRON.getLevel(),
             ItemTier.GOLD.getEnchantmentValue(),
-            Ingredient.of(new ItemStack(CyberwareItems.COMPONENT.get(4).get(), 1)));
+            Ingredient.of(new ItemStack(CyberwareItems.COMPONENTS.get(4).get(), 1)));
 
     private final int level;
     private final int uses;

@@ -7,9 +7,12 @@ import flaxbeard.cyberware.client.gui.EngineeringTableContainer;
 import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.item.BlueprintItem;
 import flaxbeard.cyberware.common.item.CyberwareItems;
+import flaxbeard.cyberware.common.misc.recipe.EngineeringRecipe;
+import flaxbeard.cyberware.common.misc.recipe.IngredientWithAmount;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -197,7 +200,7 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         if (!this.level.isClientSide) {
             this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 2);
         }
-        spawnItemBreakParticles(this.level, stack, this.worldPosition.getX() + 0.5, this.worldPosition.getY(), this.worldPosition.getZ() + 0.5, 10);
+        spawnItemBreakParticles(this.level, item, this.worldPosition.getX() + 0.5, this.worldPosition.getY(), this.worldPosition.getZ() + 0.5, 10);
         playBreakingSound();
     }
 
@@ -225,8 +228,8 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         }
     }
 
-    private static void spawnItemBreakParticles(World world, ItemStack prototype, double x, double y, double z, int count) {
-        ItemStack particleStack = new ItemStack(prototype.getItem());
+    private static void spawnItemBreakParticles(World world, Item prototype, double x, double y, double z, int count) {
+        ItemStack particleStack = new ItemStack(prototype);
         ItemParticleData data = new ItemParticleData(ParticleTypes.ITEM, particleStack);
 
         if (world instanceof ServerWorld) {
@@ -240,6 +243,26 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
                 world.addParticle(data, x, y, z, vx, vy, vz);
             }
         }
+    }
+
+    public IInventory getInventory() {
+        IInventory inv = new Inventory(7);
+        for (int i = 0; i < 6; i++) {
+            inv.setItem(i, slots.getStackInSlot(i + 2).copy());
+        }
+        inv.setItem(6, slots.getStackInSlot(8).copy());
+        return inv;
+    }
+
+    @Nonnull
+    public ItemStack getCraftingResult() {
+        if (level == null) return ItemStack.EMPTY;
+
+        IInventory inv = getInventory();
+        return level.getRecipeManager()
+                .getRecipeFor(EngineeringRecipe.Type.INSTANCE, inv, level)
+                .map(r -> r.assemble(inv))
+                .orElse(ItemStack.EMPTY);
     }
 
     public void playBreakingSound() {
@@ -272,7 +295,7 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
                 case 1:
                     return stack.getItem().equals(Items.PAPER);
                 case 9:
-                    return false;
+                    return false; // slot for crafting output
                 case 8:
                     return stack.getItem().equals(CyberwareItems.BLUEPRINT.get());
                 default:
@@ -284,6 +307,55 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             entity.setChanged();
+
+            if (slot >= 2 && slot <= 8) {
+                ItemStack result = entity.getCraftingResult();
+                setStackInSlot(9, result);
+            }
+        }
+
+        @Override
+        @Nonnull
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot == 9) {
+                ItemStack current = getStackInSlot(slot);
+                if (current.isEmpty()) return ItemStack.EMPTY;
+
+                if (!simulate && entity.level != null) {
+                    IInventory inv = entity.getInventory();
+
+                    entity.level.getRecipeManager()
+                            .getRecipeFor(EngineeringRecipe.Type.INSTANCE, inv, entity.level)
+                            .ifPresent(recipe -> {
+                                NonNullList<ItemStack> items = recipe.getRemainingItems(inv);
+
+                                for (int i = 0; i < items.size(); i++) {
+                                    setStackInSlot(i + 2, items.get(i));
+                                }
+
+                                for (int i = 0; i < 6 - items.size(); i++) {
+                                    setStackInSlot(i + 2 + items.size(), ItemStack.EMPTY);
+                                }
+
+                                setStackInSlot(8, entity.slots.getStackInSlot(8));
+                            });
+
+                    setStackInSlot(9, entity.getCraftingResult());
+
+                    if (entity.level != null) {
+                        entity.level.sendBlockUpdated(entity.worldPosition, entity.getBlockState(), entity.getBlockState(), 2);
+                    }
+                }
+                return current;
+            }
+            return super.extractItem(slot, amount, simulate);
+        }
+
+        @Override
+        @Nonnull
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            if (slot == 9) return stack;
+            return super.insertItem(slot, stack, simulate);
         }
     }
 }

@@ -12,7 +12,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemTier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -29,14 +28,14 @@ public class CyberwareItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, OverclockedOrgans.MOD_ID);
 
-    public static final List<RegistryObject<CyberwareBaseItem>> COMPONENT = Collections.unmodifiableList(
+    public static final List<RegistryObject<CyberwareBaseItem>> COMPONENTS = Collections.unmodifiableList(
             Stream.of("actuator", "reactor", "titanium", "ssc", "plating", "fiberoptics", "fullerene", "synthnerves", "storage", "microelectric")
                     .map(item -> ITEMS.register(item, CyberwareBaseItem::new))
                     .collect(Collectors.toList())
     );
 
     public static final RegistryObject<CyberwareBaseItem> CYBER_EYES_MANUFACTURED = ITEMS.register("cybereyes_manufactured",
-            TestCyberwareItem::new);
+            EyeUpgradeItem::new);
     public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = ITEMS.register("cybereyes_salvaged",
             TestCyberwareItem::makeSalvaged);
 
