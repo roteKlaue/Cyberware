@@ -1,13 +1,12 @@
 package flaxbeard.cyberware.common.block.entities;
 
-import com.mojang.datafixers.util.Pair;
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.block.CyberwareBlocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -36,6 +35,9 @@ public class CyberwareBlockEntities {
 
     public static final RegistryObject<TileEntityType<SurgeryBlockEntity>> SURGERY =
             registerBlockEntity("surgery", SurgeryBlockEntity::new, CyberwareBlocks.SURGERY_BLOCK);
+
+    public static final RegistryObject<TileEntityType<ChargerBlockEntity>> CHARGER =
+            registerBlockEntity("charger", ChargerBlockEntity::new, CyberwareBlocks.CHARGER_BLOCK);
 
     public static <T extends TileEntity, B extends Block>
     RegistryObject<TileEntityType<T>> registerBlockEntity(

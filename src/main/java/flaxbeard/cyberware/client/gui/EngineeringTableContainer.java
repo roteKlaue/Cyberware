@@ -27,7 +27,7 @@ public class EngineeringTableContainer extends Container {
         addSlot(new EngineeringSlot(blockEntity.slots, 6, 71, 53));
         addSlot(new EngineeringSlot(blockEntity.slots, 7, 89, 53));
         addSlot(new EngineeringSlot(blockEntity.slots, 8, 115, 53));
-        addSlot(new EngineeringSlot(blockEntity.slots, 9, 145, 21));
+        addSlot(new EngineeringOutputSlot(blockEntity, 9, 145, 21));
 
         int startX = 8;
         int startY = 84;
@@ -56,6 +56,34 @@ public class EngineeringTableContainer extends Container {
         if (slot != null && slot.hasItem()) {
             ItemStack slotStack = slot.getItem();
             result = slotStack.copy();
+
+            if (index == 9) { // TODO: implement multi crafting
+                if (player.level.isClientSide) return ItemStack.EMPTY;
+
+                ItemStack outputStack = slot.getItem();
+                if (outputStack.isEmpty()) return ItemStack.EMPTY;
+
+                ItemStack retStack = outputStack.copy();
+                retStack.setCount(1);
+
+                if (!this.moveItemStackTo(retStack, 10, 46, false)) {
+                    return ItemStack.EMPTY;
+                }
+
+                blockEntity.extractCrafts(1);
+
+                outputStack.shrink(1);
+                if (outputStack.getCount() <= 0) {
+                    slot.set(ItemStack.EMPTY);
+                } else {
+                    slot.setChanged();
+                }
+
+                blockEntity.refreshCraftingResult();
+                this.broadcastChanges();
+                slot.onTake(player, retStack);
+                return retStack;
+            }
 
             if (index < 10) {
                 if (!this.moveItemStackTo(slotStack, 10, 46, true)) {
@@ -132,6 +160,28 @@ public class EngineeringTableContainer extends Container {
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
             return blockEntity.slots.isItemValidForSlot(this.getSlotIndex(), stack);
+        }
+    }
+
+    public class EngineeringOutputSlot extends EngineeringSlot {
+        private final EngineeringTableBlockEntity entity;
+        public EngineeringOutputSlot(EngineeringTableBlockEntity entity, int index, int xPosition, int yPosition) {
+            super(entity.slots, index, xPosition, yPosition);
+            this.entity = entity;
+        }
+
+        @Override
+        @Nonnull
+        public ItemStack onTake(PlayerEntity player, @Nonnull ItemStack stack) {
+            if (player.level.isClientSide) return stack;
+
+            int amountTaken = stack.getCount();
+            for (int i = 0; i < amountTaken; i++) {
+                entity.extractCrafts(1);
+            }
+
+            entity.refreshCraftingResult();
+            return super.onTake(player, stack);
         }
     }
 }

@@ -270,6 +270,41 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         sw.playSound(null, x, y, z, SoundEvents.ITEM_BREAK, SoundCategory.BLOCKS, 1.0F, .5F);
     }
 
+    public void extractCrafts(int count) {
+        if (this.level == null || this.level.isClientSide) return;
+
+        for (int c = 0; c < count; c++) {
+            IInventory inv = getInventory();
+
+            this.level.getRecipeManager()
+                    .getRecipeFor(EngineeringRecipe.Type.INSTANCE, inv, this.level)
+                    .ifPresent(recipe -> {
+                        for (int i = 0; i < 6; i++) {
+                            ItemStack current = slots.getStackInSlot(i + 2);
+                            if (!current.isEmpty()) {
+                                current.shrink(1);
+                                if (current.getCount() <= 0) current = ItemStack.EMPTY;
+                                slots.setStackInSlot(i + 2, current);
+                            }
+                        }
+
+                        NonNullList<ItemStack> remaining = recipe.getRemainingItems(inv);
+                        for (int i = 0; i < remaining.size() && i < 6; i++) {
+                            slots.setStackInSlot(i + 2, remaining.get(i));
+                        }
+                    });
+        }
+
+        slots.setStackInSlot(9, getCraftingResult());
+
+        setChanged();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+    }
+
+    public void refreshCraftingResult() {
+        slots.refreshCraftingResult(4);
+    }
+
     public static class EngineeringTableItemStackHandler extends ItemStackHandler {
         private final EngineeringTableBlockEntity entity;
 
@@ -298,49 +333,16 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         @Override
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
+            refreshCraftingResult(slot);
+        }
+
+        public void refreshCraftingResult(int slot) {
             entity.setChanged();
 
             if (slot >= 2 && slot <= 8) {
                 ItemStack result = entity.getCraftingResult();
                 setStackInSlot(9, result);
             }
-        }
-
-        @Override
-        @Nonnull
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot == 9) {
-                ItemStack current = getStackInSlot(slot);
-                if (current.isEmpty()) return ItemStack.EMPTY;
-
-                if (!simulate && entity.level != null) {
-                    IInventory inv = entity.getInventory();
-
-                    entity.level.getRecipeManager()
-                            .getRecipeFor(EngineeringRecipe.Type.INSTANCE, inv, entity.level)
-                            .ifPresent(recipe -> {
-                                NonNullList<ItemStack> items = recipe.getRemainingItems(inv);
-
-                                for (int i = 0; i < items.size(); i++) {
-                                    setStackInSlot(i + 2, items.get(i));
-                                }
-
-                                for (int i = 0; i < 6 - items.size(); i++) {
-                                    setStackInSlot(i + 2 + items.size(), ItemStack.EMPTY);
-                                }
-
-                                setStackInSlot(8, entity.slots.getStackInSlot(8));
-                            });
-
-                    setStackInSlot(9, entity.getCraftingResult());
-
-                    if (entity.level != null) {
-                        entity.level.sendBlockUpdated(entity.worldPosition, entity.getBlockState(), entity.getBlockState(), 2);
-                    }
-                }
-                return current;
-            }
-            return super.extractItem(slot, amount, simulate);
         }
 
         @Override
