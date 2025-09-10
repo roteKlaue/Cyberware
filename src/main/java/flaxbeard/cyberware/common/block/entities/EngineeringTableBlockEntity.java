@@ -121,7 +121,7 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         if (!(item instanceof IDeconstructable)) return;
 
         IDeconstructable deconstruct = (IDeconstructable) item;
-        NonNullList<ItemStack> components = deconstruct.getComponents(stack);
+        NonNullList<ItemStack> components = deconstruct.getComponents(level, stack);
 
         if (components == null || components.isEmpty()) return;
 
@@ -213,7 +213,7 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
 
         float result = this.level.random.nextFloat();
         if (result < (CyberwareConfig.ENGINEERING_CHANCE.get() / 100F)) {
-            ItemStack stackBlueprint = BlueprintItem.makeBlueprint(new ItemStack(item));
+            ItemStack stackBlueprint = BlueprintItem.makeBlueprint(this.level, new ItemStack(item));
             slots.setStackInSlot(8, stackBlueprint);
             shrinkStack(slots, 1);
             this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 2);
@@ -283,7 +283,7 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
 
             switch (slot) {
                 case 0:
-                    return CyberwareAPI.canDeconstruct(stack);
+                    return CyberwareAPI.canDeconstruct(entity.level, stack);
                 case 1:
                     return stack.getItem().equals(Items.PAPER);
                 case 9:

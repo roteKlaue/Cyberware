@@ -2,6 +2,7 @@ package flaxbeard.cyberware.api.item;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 
 public interface IBlueprint
 {
@@ -10,8 +11,5 @@ public interface IBlueprint
     {
         return ItemStack.EMPTY;
     }
-    default NonNullList<ItemStack> getRequirementsForDisplay(ItemStack stack)
-    {
-        return NonNullList.create();
-    }
+    NonNullList<ItemStack> getRequirementsForDisplay(World world, ItemStack stack);
 }

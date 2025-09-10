@@ -1,0 +1,18 @@
+{
+  "type": "overclockedorgans:destructing",
+  "input": { "item": "overclockedorgans:trenchcoat" },
+  "outputs": [
+    {
+      "item": "overclockedorgans:reactor",
+      "count": 2
+    },
+    {
+      "item": "minecraft:leather",
+      "count": 12
+    },
+    {
+      "item": "minecraft:black_dye",
+      "count": 1
+    }
+  ]
+}

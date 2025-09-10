@@ -4,6 +4,7 @@ import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.api.item.ICyberware;
 import flaxbeard.cyberware.api.item.IDeconstructable;
 import lombok.Getter;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -25,53 +26,26 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
     private final int essence;
     private final @Nonnull List<RegistryObject<Item>> incompatible;
     private final @Nullable List<RegistryObject<Item>> requirement;
-    private final List<RegistryObject<CyberwareBaseItem>> components;
     private final boolean isManufactured;
     private final @Nullable RegistryObject<CyberwareItem> manufactured;
 
     public CyberwareItem(BodySlot slot, int essence,
                           List<RegistryObject<Item>> incompatible,
-                          @Nullable List<RegistryObject<Item>> requirement,
-                          List<RegistryObject<CyberwareBaseItem>> components) {
+                          @Nullable List<RegistryObject<Item>> requirement) {
 
-        this(slot, essence, incompatible, requirement, components, null);
+        this(slot, essence, incompatible, requirement, null);
     }
 
     public CyberwareItem(BodySlot slot, int essence,
                          List<RegistryObject<Item>> incompatible,
                          @Nullable List<RegistryObject<Item>> requirement,
-                         List<RegistryObject<CyberwareBaseItem>> components,
                          RegistryObject<CyberwareItem> manufactured) {
-        Objects.requireNonNull(components, "components must not be null");
-
-        boolean invalidFound = components.stream()
-                .anyMatch(c -> !CyberwareItems.COMPONENTS.contains(c));
-        if (invalidFound) {
-            throw new IllegalArgumentException("CyberwareItem may only consist of registered components.");
-        }
-
-        this.components = new ArrayList<>(components);
         this.slot = slot;
         this.essence = essence;
         this.requirement = requirement;
         this.incompatible = incompatible;
         this.manufactured = manufactured;
         this.isManufactured = manufactured != null;
-    }
-
-    @Override
-    public boolean canDestroy(ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public NonNullList<ItemStack> getComponents(ItemStack stack) {
-        NonNullList<ItemStack> result = NonNullList.create();
-        for (RegistryObject<CyberwareBaseItem> regObj : components) {
-            CyberwareBaseItem item = regObj.get();
-            result.add(new ItemStack(item));
-        }
-        return result;
     }
 
     @Override
@@ -122,7 +96,12 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
 
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable World worldIn,
-                                List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
+                                @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(new TranslationTextComponent("tooltip.overclockedorgans.shift_prompt")
+                    .withStyle(TextFormatting.GRAY));
+            return;
+        }
         tooltip.addAll(getDescription(stack));
     }
 

@@ -24,8 +24,10 @@ import javax.annotation.Nonnull;
 
 public class ScannerBlockEntity extends NameContainerProvider<ScannerBlockEntity> implements ITickableTileEntity {
     public static class ScannerItemStackHandler extends ItemStackHandler {
-        public ScannerItemStackHandler(int size) {
+        private final ScannerBlockEntity entity;
+        public ScannerItemStackHandler(ScannerBlockEntity entity, int size) {
             super(size);
+            this.entity = entity;
         }
 
         @Nonnull
@@ -40,7 +42,7 @@ public class ScannerBlockEntity extends NameContainerProvider<ScannerBlockEntity
 
             switch (slot) {
                 case 0:
-                    return CyberwareAPI.canDeconstruct(stack);
+                    return CyberwareAPI.canDeconstruct(entity.level, stack);
                 case 1:
                     return stack.getItem().equals(Items.PAPER);
                 case 2:
@@ -50,7 +52,7 @@ public class ScannerBlockEntity extends NameContainerProvider<ScannerBlockEntity
         }
     }
 
-    public final ScannerItemStackHandler slots = new ScannerItemStackHandler(3);
+    public final ScannerItemStackHandler slots = new ScannerItemStackHandler(this, 3);
     private final RangedWrapper slotsTopSides = new RangedWrapper(slots, 0, 2);
     private final RangedWrapper slotsBottom = new RangedWrapper(slots, 2, 3);
     private final RangedWrapper slotsBottom2 = new RangedWrapper(slots, 0, 1);
@@ -135,7 +137,7 @@ public class ScannerBlockEntity extends NameContainerProvider<ScannerBlockEntity
     @Override
     public void tick() {
         ItemStack toDestroy = slots.getStackInSlot(0);
-        if (CyberwareAPI.canDeconstruct(toDestroy)
+        if (CyberwareAPI.canDeconstruct(level, toDestroy)
                 && toDestroy.getCount() > 0
                 && slots.getStackInSlot(2).isEmpty()) {
             if (this.level == null) return;
@@ -162,7 +164,7 @@ public class ScannerBlockEntity extends NameContainerProvider<ScannerBlockEntity
                     float chance = calculateChance();
 
                     if (this.level.random.nextFloat() < (chance / 100F)) {
-                        ItemStack stackBlueprint = BlueprintItem.makeBlueprint(toDestroy);
+                        ItemStack stackBlueprint = BlueprintItem.makeBlueprint(level, toDestroy);
                         slots.setStackInSlot(2, stackBlueprint);
                         ItemStack current = slots.getStackInSlot(1);
                         current.shrink(1);

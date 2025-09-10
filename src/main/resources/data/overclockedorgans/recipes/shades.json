@@ -1,0 +1,14 @@
+{
+  "type": "overclockedorgans:destructing",
+  "input": { "item": "overclockedorgans:shades" },
+  "outputs": [
+    {
+      "item": "minecraft:black_stained_glass",
+      "count": 4
+    },
+    {
+      "item": "overclockedorgans:ssc",
+      "count": 1
+    }
+  ]
+}

@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -47,8 +46,8 @@ public class BlueprintItem extends Item implements IBlueprint {
         return stack;
     }
 
-    public static ItemStack makeBlueprint(ItemStack stack) {
-        if (!stack.isEmpty() && CyberwareAPI.canDeconstruct(stack)) {
+    public static ItemStack makeBlueprint(World world, ItemStack stack) {
+        if (!stack.isEmpty() && CyberwareAPI.canDeconstruct(world, stack)) {
             if (!(stack.getItem() instanceof IDeconstructable)) return ItemStack.EMPTY;
 
             ItemStack toBlue = new  ItemStack(stack.getItem(), 1);
@@ -100,13 +99,13 @@ public class BlueprintItem extends Item implements IBlueprint {
     }
 
     @Override
-    public NonNullList<ItemStack> getRequirementsForDisplay(ItemStack stack) {
+    public NonNullList<ItemStack> getRequirementsForDisplay(World world, ItemStack stack) {
         CompoundNBT tagCompound = stack.getTag();
         if (tagCompound != null
                 && tagCompound.contains(NBT_ITEM_KEY, Constants.NBT.TAG_COMPOUND)) {
             ItemStack blueprintItem = ItemStack.of(tagCompound.getCompound(NBT_ITEM_KEY));
-            if (!blueprintItem.isEmpty() && CyberwareAPI.canDeconstruct(blueprintItem)) {
-                return CyberwareAPI.getComponents(blueprintItem);
+            if (!blueprintItem.isEmpty() && CyberwareAPI.canDeconstruct(world, blueprintItem)) {
+                return CyberwareAPI.getComponents(world, blueprintItem);
             }
         }
 

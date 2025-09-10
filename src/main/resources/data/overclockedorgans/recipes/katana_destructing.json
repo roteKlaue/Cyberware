@@ -1,0 +1,18 @@
+{
+  "type": "overclockedorgans:destructing",
+  "input": { "item": "overclockedorgans:katana" },
+  "outputs": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 2
+    },
+    {
+      "item": "overclockedorgans:titanium",
+      "count": 1
+    },
+    {
+      "item": "overclockedorgans:plating",
+      "count": 1
+    }
+  ]
+}
