@@ -1,0 +1,18 @@
+{
+  "type": "overclockedorgans:destructing",
+  "input": { "item": "overclockedorgans:cybereyes_manufactured" },
+  "outputs": [
+    {
+      "item": "overclockedorgans:fiberoptics",
+      "amount": 2
+    },
+    {
+      "item": "overclockedorgans:synthnerves",
+      "amount": 2
+    },
+    {
+      "item": "overclockedorgans:plating",
+      "amount": 1
+    }
+  ]
+}

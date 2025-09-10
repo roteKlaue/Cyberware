@@ -113,6 +113,11 @@
   "container.overclockedorgans.scanner": "Scanner",
   "container.overclockedorgans.engineering_table": "Cyberware Engineering",
 
+  "gui.overclockedorgans.destroy": "Void Warranty",
+  "gui.overclockedorgans.insert_blueprint": "Insert Cyberware Blueprint",
+  "gui.overclockedorgans.chance_for_blueprint": "%s%% Chance for blueprint",
+  "gui.overclockedorgans.insert_paper":"Insert Paper",
+  "gui.overclockedorgans.to_destroy":"Insert Cyberware to Destroy",
   "gui.overclockedorgans.to_scan":"Insert Cyberware to Scan",
   "gui.overclockedorgans.time_left": "%1$dm%2$ds Left",
   "gui.overclockedorgans.percent":"%1$s Chance",

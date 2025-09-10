@@ -3,7 +3,7 @@
   "input": { "item": "overclockedorgans:trenchcoat" },
   "outputs": [
     {
-      "item": "overclockedorgans:reactor",
+      "item": "overclockedorgans:titanium",
       "count": 2
     },
     {

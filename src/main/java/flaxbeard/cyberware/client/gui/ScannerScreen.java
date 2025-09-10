@@ -7,12 +7,15 @@ import flaxbeard.cyberware.common.CyberwareConfig;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScannerScreen extends ContainerScreen<ScannerContainer> {
@@ -87,6 +90,25 @@ public class ScannerScreen extends ContainerScreen<ScannerContainer> {
         int count = Integer.parseInt(I18n.get("gui." + OverclockedOrgans.MOD_ID + ".scanner_saying.count")) - 1;
         langMax.put(language, count);
         return count;
+    }
+
+    @Override
+    protected void renderTooltip(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderTooltip(matrixStack, mouseX, mouseY);
+
+        Slot slot0 = this.menu.getSlot(0);
+        if (!slot0.hasItem() && isHovering(slot0.x, slot0.y, 16, 16, mouseX, mouseY)) {
+            List<ITextComponent> tooltip = new ArrayList<>();
+            tooltip.add(new TranslationTextComponent("gui.overclockedorgans.to_scan"));
+            this.renderComponentTooltip(matrixStack, tooltip, mouseX, mouseY);
+        }
+
+        Slot slot1 = this.menu.getSlot(1);
+        if (!slot1.hasItem() && isHovering(slot1.x, slot1.y, 16, 16, mouseX, mouseY)) {
+            List<ITextComponent> tooltip = new ArrayList<>();
+            tooltip.add(new TranslationTextComponent("gui.overclockedorgans.insert_paper"));
+            this.renderComponentTooltip(matrixStack, tooltip, mouseX, mouseY);
+        }
     }
 
     @Override
