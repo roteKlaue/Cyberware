@@ -144,7 +144,7 @@ public class EngineeringTableContainer extends Container {
 
     public void notifyButtonClick(PlayerEntity player) {
         if (player == null || player.level.isClientSide) return;
-        blockEntity.destruct(player);
+        blockEntity.destruct();
     }
 
     public class EngineeringSlot extends SlotItemHandler {

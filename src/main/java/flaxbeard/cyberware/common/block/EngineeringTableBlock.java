@@ -116,4 +116,24 @@ public class EngineeringTableBlock extends TallBlock<EngineeringTableBlockEntity
         if (!isTop(state)) return VoxelShapes.block();
         return getDirectionalShape(facing, TOP_EAST, TOP_SOUTH, TOP_WEST, TOP_NORTH);
     }
+
+    @Override
+    public void onRemove(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() == newState.getBlock()) return;
+
+        TileEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof EngineeringTableBlockEntity) {
+            EngineeringTableBlockEntity table = (EngineeringTableBlockEntity) tile;
+
+            for (int i = 0; i < table.slots.getSlots() - 1; i++) {
+                ItemStack stack = table.slots.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    popResource(world, pos, stack);
+                }
+            }
+
+            world.updateNeighbourForOutputSignal(pos, this);
+        }
+        super.onRemove(state, world, pos, newState, isMoving);
+    }
 }

@@ -21,7 +21,7 @@ import java.util.Collections;
 
 public class BlueprintArchiveBlockEntity extends LockableTileEntity {
     private static final int SIZE = 18;
-    private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+    public final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private ITextComponent customName;
 
     public BlueprintArchiveBlockEntity() {
@@ -47,7 +47,7 @@ public class BlueprintArchiveBlockEntity extends LockableTileEntity {
     @Override
     @Nonnull
     public ItemStack removeItem(int index, int count) {
-        ItemStack stack = net.minecraft.inventory.ItemStackHelper.removeItem(items, index, count);
+        ItemStack stack = ItemStackHelper.removeItem(items, index, count);
         if (!stack.isEmpty()) setChanged();
         return stack;
     }
@@ -55,7 +55,7 @@ public class BlueprintArchiveBlockEntity extends LockableTileEntity {
     @Override
     @Nonnull
     public ItemStack removeItemNoUpdate(int index) {
-        ItemStack stack = net.minecraft.inventory.ItemStackHelper.takeItem(items, index);
+        ItemStack stack = ItemStackHelper.takeItem(items, index);
         if (!stack.isEmpty()) setChanged();
         return stack;
     }

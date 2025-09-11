@@ -20,27 +20,55 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RangedWrapper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class EngineeringTableBlockEntity extends NameContainerProvider<EngineeringTableBlockEntity> {
+public class EngineeringTableBlockEntity extends NameContainerProvider<EngineeringTableBlockEntity> implements ITickableTileEntity {
     private static final int SLOT_COUNT = 10;
     public final EngineeringTableItemStackHandler slots = new EngineeringTableItemStackHandler(this);
+    private final LazyOptional<IItemHandler> topHandler = LazyOptional.of(() -> new RangedWrapper(slots, 0, 1));
+    private final LazyOptional<IItemHandler> sideHandler = LazyOptional.of(() -> new RangedWrapper(slots, 1, 2));
+    private final LazyOptional<IItemHandler> bottomHandler = LazyOptional.of(() -> new RangedWrapper(slots, 2, 8));
 
     public float clickedTime;
 
     public EngineeringTableBlockEntity() {
         super(CyberwareBlockEntities.ENGINEERING_TABLE.get(), "engineering_table",
                 EngineeringTableContainer::new, EngineeringTableBlockEntity.class);
+    }
+
+    @Override
+    @Nonnull
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (side == Direction.UP) {
+                return topHandler.cast();
+            } else if (side == Direction.DOWN) {
+                return bottomHandler.cast();
+            } else if (side != null) {
+                return sideHandler.cast();
+            } else {
+                return LazyOptional.of(() -> slots).cast();
+            }
+        }
+        return super.getCapability(cap, side);
     }
 
     @Override
@@ -105,6 +133,19 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
         }
     }
 
+    @Override
+    public void tick() {
+        if (level == null || level.isClientSide) return;
+
+        boolean powered = level.hasNeighborSignal(worldPosition)
+                || level.hasNeighborSignal(worldPosition.below());
+        if (!powered) return;
+        long last = (long) clickedTime;
+        long now = level.getGameTime();
+        if (now - last >= 25) {
+            destruct();
+        }
+    }
 
     public boolean stillValid(PlayerEntity player) {
         return (this.level != null) &&
@@ -113,9 +154,9 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
                 worldPosition.getZ() + 0.5) > 64.0);
     }
 
-    public void destruct(PlayerEntity player) {
+    public void destruct() {
         ItemStack stack = slots.getStackInSlot(0);
-        if (stack.isEmpty() || this.level == null || player == null) return;
+        if (stack.isEmpty() || this.level == null) return;
 
         Item item = stack.getItem();
         if (!(item instanceof IDeconstructable)) return;
@@ -235,6 +276,14 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
                 world.addParticle(data, x, y, z, vx, vy, vz);
             }
         }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        topHandler.invalidate();
+        sideHandler.invalidate();
+        bottomHandler.invalidate();
     }
 
     public IInventory getInventory() {

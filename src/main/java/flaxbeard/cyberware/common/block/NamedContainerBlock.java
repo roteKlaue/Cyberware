@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -22,18 +23,21 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public class NamedContainerBlock<T extends TileEntity> extends DirectionalBlock {
     private final RegistryObject<TileEntityType<T>> tileEntitySupplier;
     private final Class<T> tileEntityClass;
     private final BlockEntityNameAccessor<T> tileNameAccessor;
+    private final Function<T, NonNullList<ItemStack>> itemStacksSupplier;
 
     public NamedContainerBlock(Properties properties, RegistryObject<TileEntityType<T>> tileEntitySupplier, Class<T> entityClass,
-                               BlockEntityNameAccessor<T> tileNameAccessor) {
+                               BlockEntityNameAccessor<T> tileNameAccessor, Function<T, NonNullList<ItemStack>> getItems) {
         super(properties);
         this.tileEntitySupplier = tileEntitySupplier;
         this.tileEntityClass = entityClass;
         this.tileNameAccessor = tileNameAccessor;
+        this.itemStacksSupplier = getItems;
     }
 
     @Override
@@ -121,6 +125,23 @@ public class NamedContainerBlock<T extends TileEntity> extends DirectionalBlock 
         @Override
         public void setName(T te, ITextComponent name) {
             te.setCustomName(name);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onRemove(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            TileEntity tile = world.getBlockEntity(pos);
+            if (tileEntityClass.isInstance(tile)) {
+                @SuppressWarnings("unchecked")
+                T castedTile = (T) tile;
+                NonNullList<ItemStack> stacks = itemStacksSupplier.apply(castedTile);
+                stacks.stream().filter(itemStack -> !itemStack.isEmpty())
+                        .forEach(fort -> popResource(world, pos, fort));
+                world.updateNeighbourForOutputSignal(pos, this);
+            }
+            super.onRemove(state, world, pos, newState, isMoving);
         }
     }
 }
