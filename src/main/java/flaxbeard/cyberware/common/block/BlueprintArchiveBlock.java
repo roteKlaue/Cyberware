@@ -2,15 +2,9 @@ package flaxbeard.cyberware.common.block;
 
 import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
-import flaxbeard.cyberware.common.block.entities.EngineeringTableBlockEntity;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 

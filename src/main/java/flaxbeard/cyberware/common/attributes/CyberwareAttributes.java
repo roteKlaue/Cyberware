@@ -15,7 +15,7 @@ public class CyberwareAttributes {
 
     public static final RegistryObject<Attribute> TOLERANCE = ATTRIBUTES.register(
             "essence",
-            () -> new RangedAttribute("attribute.cyberware.tolerance",
+            () -> new RangedAttribute("attribute.overclockedorgans.tolerance",
                     CyberwareConfig.ESSENCE.get(),
                     0.0F, Double.MAX_VALUE
             )

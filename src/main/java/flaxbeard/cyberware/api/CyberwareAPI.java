@@ -3,6 +3,7 @@ package flaxbeard.cyberware.api;
 import flaxbeard.cyberware.api.item.IDeconstructable;
 import flaxbeard.cyberware.common.item.BlueprintItem;
 import flaxbeard.cyberware.common.misc.recipe.DestructingRecipe;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
@@ -54,5 +55,9 @@ public class CyberwareAPI {
                 .findFirst()
                 .map(DestructingRecipe::getOutputs)
                 .orElse(NonNullList.create());
+    }
+
+    public static ICyberwareUserData getCapabilityOrNull(LivingEntity entityLiving) {
+        return null; // TODO: implement
     }
 }

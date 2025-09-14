@@ -6,6 +6,7 @@ import flaxbeard.cyberware.common.block.CyberwareBlocks;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
 import flaxbeard.cyberware.common.effect.CyberwarePotionEffects;
 import flaxbeard.cyberware.common.entity.CyberwareEntities;
+import flaxbeard.cyberware.common.handler.EssentialsMissingHandler;
 import flaxbeard.cyberware.common.item.CyberwareItems;
 import flaxbeard.cyberware.common.misc.CyberwareRecipeSerializers;
 import flaxbeard.cyberware.common.network.CyberwarePackets;
@@ -46,6 +47,7 @@ public class OverclockedOrgans {
         CyberwareRecipeSerializers.register(eventBus);
         CyberwarePotionEffects.register(eventBus);
         CyberwareEntities.register(eventBus);
+        EssentialsMissingHandler.register();
 
         eventBus.addListener(this::setup);
         eventBus.addListener(this::enqueueIMC);

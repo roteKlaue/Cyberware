@@ -13,6 +13,9 @@ public class CyberwarePotionEffects {
     public static final RegistryObject<Effect> NEUROPOZYNE = EFFECTS.register("neuropozyne",
             NeuropozynePotion::new);
 
+    public static final RegistryObject<Effect> REJECTION = EFFECTS.register("rejection",
+            RejectionEffect::new);
+
     public static void register(IEventBus event) {
         EFFECTS.register(event);
     }

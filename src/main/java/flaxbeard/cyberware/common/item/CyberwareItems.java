@@ -1,5 +1,6 @@
 package flaxbeard.cyberware.common.item;
 
+import com.sun.javafx.UnmodifiableArrayList;
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.item.equipment.CyberwareArmorItem;
@@ -17,10 +18,12 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,10 +37,14 @@ public class CyberwareItems {
                     .collect(Collectors.toList())
     );
 
-    public static final RegistryObject<CyberwareBaseItem> CYBER_EYES_MANUFACTURED = ITEMS.register("cybereyes_manufactured",
+    public static final RegistryObject<CyberwareBaseItem> CYBER_EYES_MANUFACTURED = registerItem("cybereyes_manufactured",
             EyeUpgradeItem::new);
-    public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = ITEMS.register("cybereyes_salvaged",
+    public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = registerItem("cybereyes_salvaged",
             TestCyberwareItem::makeSalvaged);
+    public static final RegistryObject<Item> CYBER_LEG_LEFT = registerItem("cyber_leg_left");
+    public static final RegistryObject<Item> CYBER_LEG_RIGHT = registerItem("cyber_leg_right");
+    public static final RegistryObject<Item> CYBER_ARM_RIGHT = registerItem("cyber_arm_right");
+    public static final RegistryObject<Item> CYBER_ARM_LEFT = registerItem("cyber_arm_left");
 
     public static RegistryObject<CyberwareSwordItem> KATANA;
     public static RegistryObject<CyberwareArmorItem> SHADES;
@@ -57,7 +64,6 @@ public class CyberwareItems {
             TRENCHCOAT
     );
 
-
     static {
         if (CyberwareConfig.ENABLE_KATANA.get()) {
             KATANA = ITEMS.register("katana",
@@ -74,6 +80,14 @@ public class CyberwareItems {
             TRENCHCOAT = registerArmor("trenchcoat",
                     CyberwareArmorMaterials.TRENCHCOAT, EquipmentSlotType.CHEST);
         }
+    }
+
+    private static RegistryObject<Item> registerItem(@Nonnull String name) {
+        return registerItem(name, () -> new Item(new Item.Properties()));
+    }
+
+    private static <T extends Item> RegistryObject<T> registerItem(@Nonnull String name, Supplier<T> supplier) {
+        return ITEMS.register(name.toLowerCase(), supplier);
     }
 
     public static <T extends Block> RegistryObject<BlockItem> registerBlockItem(String name, RegistryObject<T> block) {
