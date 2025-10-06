@@ -12,6 +12,7 @@ import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.effect.CyberwarePotionEffects;
 import flaxbeard.cyberware.common.item.CyberlimbItem;
 import flaxbeard.cyberware.common.item.CyberwareItems;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.LivingEntity;
@@ -25,10 +26,12 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -36,7 +39,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
@@ -81,7 +83,7 @@ public class EssentialsMissingHandler {
     public static final EssentialsMissingHandler INSTANCE = new EssentialsMissingHandler();
     public static final ResourceLocation BLACK_PX = new ResourceLocation(OverclockedOrgans.MOD_ID + ":textures/gui/blackpx.png");
 
-    private static Map<Integer, Integer> timesLungs = new HashMap<>();
+    private static final Map<Integer, Integer> timesLungs = new HashMap<>();
     private static final UUID idMissingLegSpeedAttribute = UUID.fromString("fe00fdea-5044-11e6-beb8-9e71128cae77");
     private static final HashMultimap<Attribute, AttributeModifier> multimapMissingLegSpeedAttribute;
 
@@ -91,10 +93,10 @@ public class EssentialsMissingHandler {
                 new AttributeModifier(idMissingLegSpeedAttribute, "Missing leg speed", -100F, AttributeModifier.Operation.ADDITION));
     }
 
-    private Map<Integer, Boolean> last = new HashMap<>();
-    private Map<Integer, Boolean> lastClient = new HashMap<>();
-    private static Map<Integer, Integer> mapHunger = new HashMap<>();
-    private static Map<Integer, Float> mapSaturation = new HashMap<>();
+    private final Map<Integer, Boolean> last = new HashMap<>();
+    private final Map<Integer, Boolean> lastClient = new HashMap<>();
+    private final static Map<Integer, Integer> mapHunger = new HashMap<>();
+    private final static Map<Integer, Float> mapSaturation = new HashMap<>();
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(INSTANCE);
@@ -102,11 +104,12 @@ public class EssentialsMissingHandler {
 
     @SubscribeEvent
     public void triggerCyberwareEvent(LivingEvent.LivingUpdateEvent event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+        LivingEntity livingEntity = event.getEntityLiving();
 
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(entityLiving);
-        if (cyberwareUserData != null) {
-            CyberwareUpdateEvent cyberwareUpdateEvent = new CyberwareUpdateEvent(entityLiving, cyberwareUserData);
+        LazyOptional<ICyberwareUserData> cyberwareUserData = CyberwareAPI.getCyberwareData(livingEntity);
+        if (cyberwareUserData.isPresent()) {
+            OverclockedOrgans.LOGGER.info("Cyberware UserData: {}", cyberwareUserData.orElseThrow(AssertionError::new));
+            CyberwareUpdateEvent cyberwareUpdateEvent = new CyberwareUpdateEvent(livingEntity, cyberwareUserData.orElseThrow(AssertionError::new));
             MinecraftForge.EVENT_BUS.post(cyberwareUpdateEvent);
         }
     }
@@ -239,10 +242,11 @@ public class EssentialsMissingHandler {
 
     @SubscribeEvent
     public void handleJump(LivingEvent.LivingJumpEvent event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+        LivingEntity livingEntity = event.getEntityLiving();
 
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(entityLiving);
-        if (cyberwareUserData == null) return;
+        LazyOptional<ICyberwareUserData> dataLazyOptional = CyberwareAPI.getCyberwareData(livingEntity);
+        if (!dataLazyOptional.isPresent()) return;
+        ICyberwareUserData cyberwareUserData = dataLazyOptional.orElseThrow(AssertionError::new);
 
         int numMissingLegs = 0;
 
@@ -256,7 +260,7 @@ public class EssentialsMissingHandler {
         numMissingLegs = getNumMissingLegs(cyberwareUserData, numMissingLegs);
 
         if (numMissingLegs == 2) {
-            entityLiving.setDeltaMovement(entityLiving.getDeltaMovement().x, 0.2F, entityLiving.getDeltaMovement().z);
+            livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().x, 0.2F, livingEntity.getDeltaMovement().z);
         }
     }
 
@@ -275,39 +279,43 @@ public class EssentialsMissingHandler {
 
     @SubscribeEvent
     public void handleEatFoodTick(LivingEntityUseItemEvent.Tick event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+        LivingEntity livingEntity = event.getEntityLiving();
         ItemStack stack = event.getItem();
 
-        if (entityLiving == null) return;
+        if (livingEntity == null) return;
 
-        if (entityLiving instanceof PlayerEntity
+        if (livingEntity instanceof PlayerEntity
                 && !stack.isEmpty()
                 && stack.getUseAnimation() == UseAction.EAT) {
-            PlayerEntity entityPlayer = (PlayerEntity) entityLiving;
-            ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(entityLiving);
+            PlayerEntity entityPlayer = (PlayerEntity) livingEntity;
+            LazyOptional<ICyberwareUserData> dataLazyOptional = CyberwareAPI.getCyberwareData(livingEntity);
+            if (!dataLazyOptional.isPresent()) return;
+            ICyberwareUserData cyberwareUserData = dataLazyOptional.orElseThrow(AssertionError::new);
 
-            if (cyberwareUserData != null && !cyberwareUserData.hasEssential(ICyberware.BodySlot.LOWER_ORGANS)) {
+            if (!cyberwareUserData.hasEssential(ICyberware.BodySlot.LOWER_ORGANS)) {
                 mapHunger.put(entityPlayer.getId(), entityPlayer.getFoodData().getFoodLevel());
                 mapSaturation.put(entityPlayer.getId(), entityPlayer.getFoodData().getSaturationLevel());
                 return;
             }
         }
 
-        mapHunger.remove(entityLiving.getId());
-        mapSaturation.remove(entityLiving.getId());
+        mapHunger.remove(livingEntity.getId());
+        mapSaturation.remove(livingEntity.getId());
     }
 
     @SubscribeEvent
     public void handleEatFoodEnd(LivingEntityUseItemEvent.Finish event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+        LivingEntity livingEntity = event.getEntityLiving();
         ItemStack stack = event.getItem();
 
-        if (!(entityLiving instanceof PlayerEntity) || stack.isEmpty() || stack.getUseAnimation() != UseAction.EAT)
+        if (!(livingEntity instanceof PlayerEntity) || stack.isEmpty() || stack.getUseAnimation() != UseAction.EAT)
             return;
 
-        PlayerEntity player = (PlayerEntity) entityLiving;
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(player);
-        if (cyberwareUserData == null || cyberwareUserData.hasEssential(ICyberware.BodySlot.LOWER_ORGANS))
+        PlayerEntity player = (PlayerEntity) livingEntity;
+        LazyOptional<ICyberwareUserData> dataLazyOptional = CyberwareAPI.getCyberwareData(livingEntity);
+        if (!dataLazyOptional.isPresent()) return;
+        ICyberwareUserData cyberwareUserData = dataLazyOptional.orElseThrow(AssertionError::new);
+        if (cyberwareUserData.hasEssential(ICyberware.BodySlot.LOWER_ORGANS))
             return;
 
         Integer hunger = mapHunger.get(player.getId());
@@ -329,10 +337,11 @@ public class EssentialsMissingHandler {
 
     @SubscribeEvent
     public void handleMissingSkin(LivingHurtEvent event) {
-        LivingEntity entityLiving = event.getEntityLiving();
+        LivingEntity livingEntity = event.getEntityLiving();
 
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(entityLiving);
-        if (cyberwareUserData == null) return;
+        LazyOptional<ICyberwareUserData> dataLazyOptional = CyberwareAPI.getCyberwareData(livingEntity);
+        if (!dataLazyOptional.isPresent()) return;
+        ICyberwareUserData cyberwareUserData = dataLazyOptional.orElseThrow(AssertionError::new);
 
         if (!cyberwareUserData.hasEssential(ICyberware.BodySlot.SKIN)
                 && (!event.getSource().isBypassArmor()
@@ -353,40 +362,30 @@ public class EssentialsMissingHandler {
 
     @SubscribeEvent
     public void handleEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        LivingEntity livingEntity = event.getEntityLiving();
-
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(livingEntity);
-        if (cyberwareUserData == null) return;
-
-        processEvent(event, event.getHand(), event.getPlayer(), cyberwareUserData);
+        callProcessEvent(event);
     }
 
     @SubscribeEvent
     public void handleLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        LivingEntity livingEntity = event.getEntityLiving();
-
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(livingEntity);
-        if (cyberwareUserData == null) return;
-
-        processEvent(event, event.getHand(), event.getPlayer(), cyberwareUserData);
+        callProcessEvent(event);
     }
 
     @SubscribeEvent
     public void handleRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        LivingEntity livingEntity = event.getEntityLiving();
-
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(livingEntity);
-        if (cyberwareUserData == null) return;
-
-        processEvent(event, event.getHand(), event.getPlayer(), cyberwareUserData);
+        callProcessEvent(event);
     }
 
     @SubscribeEvent
     public void handleRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        callProcessEvent(event);
+    }
+
+    private void callProcessEvent(PlayerInteractEvent event) {
         LivingEntity livingEntity = event.getEntityLiving();
 
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(livingEntity);
-        if (cyberwareUserData == null) return;
+        LazyOptional<ICyberwareUserData> dataLazyOptional = CyberwareAPI.getCyberwareData(livingEntity);
+        if (!dataLazyOptional.isPresent()) return;
+        ICyberwareUserData cyberwareUserData = dataLazyOptional.orElseThrow(AssertionError::new);
 
         processEvent(event, event.getHand(), event.getPlayer(), cyberwareUserData);
     }
@@ -423,29 +422,31 @@ public class EssentialsMissingHandler {
     @OnlyIn(Dist.CLIENT)
     public void overlayPre(RenderGameOverlayEvent.Pre event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+        Minecraft minecraft = Minecraft.getInstance();
 
-        PlayerEntity entityPlayer = Minecraft.getInstance().player;
-        if (entityPlayer == null) return;
+        PlayerEntity player = minecraft.player;
+        if (player == null) return;
 
-        ICyberwareUserData cyberwareUserData = CyberwareAPI.getCapabilityOrNull(entityPlayer);
-        if (cyberwareUserData != null
-                && !cyberwareUserData.hasEssential(ICyberware.BodySlot.EYES)
-                && !entityPlayer.isCreative()) {
+        LazyOptional<ICyberwareUserData> dataLazyOptional = CyberwareAPI.getCyberwareData(player);
+        if (!dataLazyOptional.isPresent()) return;
+        ICyberwareUserData cyberwareUserData = dataLazyOptional.orElseThrow(AssertionError::new);
+
+        if (!cyberwareUserData.hasEssential(ICyberware.BodySlot.EYES) && !player.isCreative()) {
             MatrixStack matrixStack = event.getMatrixStack();
 
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.9F);
-            Minecraft.getInstance().getTextureManager().bind(BLACK_PX);
+            minecraft.getTextureManager().bind(BLACK_PX);
 
             AbstractGui.blit(
                     matrixStack,
                     0, 0,
                     0, 0,
-                    Minecraft.getInstance().getWindow().getWidth(),
-                    Minecraft.getInstance().getWindow().getHeight(),
-                    Minecraft.getInstance().getWindow().getWidth(),
-                    Minecraft.getInstance().getWindow().getHeight()
+                    minecraft.getWindow().getWidth(),
+                    minecraft.getWindow().getHeight(),
+                    minecraft.getWindow().getWidth(),
+                    minecraft.getWindow().getHeight()
             );
 
             RenderSystem.disableBlend();

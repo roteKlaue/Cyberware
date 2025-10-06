@@ -49,8 +49,10 @@ public class BlueprintItem extends Item implements IBlueprint {
     public static ItemStack makeBlueprint(World world, ItemStack stack) {
         if (!stack.isEmpty() && CyberwareAPI.canDeconstruct(world, stack)) {
             if (!(stack.getItem() instanceof IDeconstructable)) return ItemStack.EMPTY;
+            IDeconstructable manufactured = ((IDeconstructable) stack.getItem()).getManufactured();
+            if (!(manufactured instanceof Item)) return ItemStack.EMPTY;
 
-            ItemStack toBlue = new  ItemStack(stack.getItem(), 1);
+            ItemStack toBlue = new  ItemStack((Item) manufactured, 1);
             toBlue.setTag(null);
 
             ItemStack ret = new ItemStack(CyberwareItems.BLUEPRINT.get());

@@ -1,6 +1,7 @@
 package flaxbeard.cyberware.common.network;
 
 import flaxbeard.cyberware.OverclockedOrgans;
+import flaxbeard.cyberware.api.hud.UpdateHudColorPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -24,5 +25,10 @@ public class CyberwarePackets {
                 buf -> new EngineeringDestroyPacketHandler(buf.readInt()),
                 EngineeringDestroyPacketHandler::handle
         );
+        NETWORK.registerMessage(packetId++,
+                UpdateHudColorPacket.class,
+                UpdateHudColorPacket::encode,
+                UpdateHudColorPacket::decode,
+                UpdateHudColorPacket::handle);
     }
 }
