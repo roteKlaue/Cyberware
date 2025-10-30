@@ -17,19 +17,16 @@ public class CyberwareBaseItem extends Item {
                 .tab(group));
     }
 
-    public ItemStack getCachedStack(int damage)
-    {
+    public ItemStack getCachedStack(int damage) {
         ItemStack itemStack = itemStackCache[damage];
-        if ( itemStack != null
+        if (itemStack != null
                 && ( itemStack.getItem() != this
                 || itemStack.getCount() != 1
-                || getDamage(itemStack) != damage ) )
-        {
+                || getDamage(itemStack) != damage)) {
             OverclockedOrgans.LOGGER.error("Corrupted item stack cache: found {} as {}:{}, expected {}:{}", itemStack, itemStack.getItem(), itemStack.getDamageValue(), this, damage);
             itemStack = null;
         }
-        if (itemStack == null)
-        {
+        if (itemStack == null) {
             itemStack = new ItemStack(this, 1);
             itemStack.setDamageValue(damage);
             itemStackCache[damage] = itemStack;

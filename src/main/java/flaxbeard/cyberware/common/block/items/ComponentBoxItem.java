@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class ComponentBoxItem extends BlockItem {
     public ComponentBoxItem(Block block, Properties properties) {
@@ -56,6 +57,18 @@ public class ComponentBoxItem extends BlockItem {
                 @Override
                 @Nonnull
                 public ITextComponent getDisplayName() {
+                    if (stack.hasCustomHoverName()) {
+                        return stack.getHoverName();
+                    }
+
+                    CompoundNBT tag = stack.getTag();
+                    if (tag != null && tag.contains("BlockEntityTag")) {
+                        CompoundNBT beTag = tag.getCompound("BlockEntityTag");
+                        if (beTag.contains("CustomName", 8)) {
+                            return Objects.requireNonNull(ITextComponent.Serializer.fromJson(beTag.getString("CustomName")));
+                        }
+                    }
+
                     return new TranslationTextComponent("container." + OverclockedOrgans.MOD_ID + ".component_box");
                 }
 

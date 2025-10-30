@@ -14,34 +14,29 @@ public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
     }
 
     @Override
-    public String getUnlocalizedLabel(ItemStack stack)
-    {
+    public String getUnlocalizedLabel(ItemStack stack) {
         return EnableDisableHelper.getUnlocalizedLabel(stack);
     }
 
     private static final float[] f = new float[] { 1F, 0F, 0F };
 
     @Override
-    public float[] getColor(ItemStack stack)
-    {
+    public float[] getColor(ItemStack stack) {
         return EnableDisableHelper.isEnabled(stack) ? f : null;
     }
 
     @Override
-    public boolean isActive(ItemStack stack)
-    {
+    public boolean isActive(ItemStack stack) {
         return EnableDisableHelper.isEnabled(stack);
     }
 
     @Override
-    public boolean hasMenu(ItemStack stack)
-    {
+    public boolean hasMenu(ItemStack stack) {
         return true;
     }
 
     @Override
-    public void use(Entity entity, ItemStack stack)
-    {
+    public void use(Entity entity, ItemStack stack) {
         EnableDisableHelper.toggle(stack);
     }
 }

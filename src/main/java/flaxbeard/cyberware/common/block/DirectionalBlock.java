@@ -48,16 +48,17 @@ public class DirectionalBlock extends Block {
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
-    public static VoxelShape getDirectionalShape(@Nonnull Direction facing,
-                                                 @Nonnull VoxelShape topEast,
-                                                 @Nonnull VoxelShape topSouth,
-                                                 @Nonnull VoxelShape topWest,
-                                                 @Nonnull VoxelShape topNorth) {
+    public static VoxelShape getDirectionalShape(@Nonnull BlockState state,
+                                                 @Nonnull VoxelShape south,
+                                                 @Nonnull VoxelShape west,
+                                                 @Nonnull VoxelShape north,
+                                                 @Nonnull VoxelShape east) {
+        Direction facing = state.getValue(FACING);
         switch (facing) {
-            case EAST  : return topEast;
-            case SOUTH : return topSouth;
-            case WEST  : return topWest;
-            default    : return topNorth;
+            case EAST  : return east;
+            case SOUTH : return south;
+            case WEST  : return west;
+            default    : return north;
         }
     }
 }

@@ -1,6 +1,6 @@
 package flaxbeard.cyberware.api.hud;
 
-import net.minecraft.client.MainWindow;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 
 public interface IHudElement {
@@ -14,7 +14,7 @@ public interface IHudElement {
         BOTTOM
     }
 
-    void render(PlayerEntity entityPlayer, MainWindow resolution, boolean isHUDjackAvailable, boolean isConfigOpen, float partialTicks);
+    void render(PlayerEntity entityPlayer, ScaledResolution resolution, boolean isHUDjackAvailable, boolean isConfigOpen, float partialTicks, MatrixStack matrixStack);
 
     boolean canMove();
 

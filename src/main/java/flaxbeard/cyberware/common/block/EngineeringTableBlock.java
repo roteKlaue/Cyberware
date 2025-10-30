@@ -10,7 +10,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -112,9 +111,8 @@ public class EngineeringTableBlock extends TallBlock<EngineeringTableBlockEntity
                                @Nonnull IBlockReader worldIn,
                                @Nonnull BlockPos pos,
                                @Nonnull ISelectionContext context) {
-        Direction facing = state.getValue(FACING);
         if (!isTop(state)) return VoxelShapes.block();
-        return getDirectionalShape(facing, TOP_EAST, TOP_SOUTH, TOP_WEST, TOP_NORTH);
+        return getDirectionalShape(state, TOP_SOUTH, TOP_WEST, TOP_NORTH, TOP_EAST);
     }
 
     @Override

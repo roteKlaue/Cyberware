@@ -41,6 +41,8 @@ public class CyberwareItems {
             EyeUpgradeItem::new);
     public static final RegistryObject<? extends Item> CYBER_EYES_SALVAGED = registerItem("cybereyes_salvaged",
             TestCyberwareItem::makeSalvaged);
+    public static final RegistryObject<CyberwareBaseItem> HUDLENS_MANUFACTURED = registerItem("hudlens_manufactured",
+            EyeUpgradeItem::new);
     public static final RegistryObject<Item> CYBER_LEG_LEFT = registerItem("cyber_leg_left");
     public static final RegistryObject<Item> CYBER_LEG_RIGHT = registerItem("cyber_leg_right");
     public static final RegistryObject<Item> CYBER_ARM_RIGHT = registerItem("cyber_arm_right");

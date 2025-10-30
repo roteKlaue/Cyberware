@@ -108,7 +108,6 @@ public class EssentialsMissingHandler {
 
         LazyOptional<ICyberwareUserData> cyberwareUserData = CyberwareAPI.getCyberwareData(livingEntity);
         if (cyberwareUserData.isPresent()) {
-            OverclockedOrgans.LOGGER.info("Cyberware UserData: {}", cyberwareUserData.orElseThrow(AssertionError::new));
             CyberwareUpdateEvent cyberwareUpdateEvent = new CyberwareUpdateEvent(livingEntity, cyberwareUserData.orElseThrow(AssertionError::new));
             MinecraftForge.EVENT_BUS.post(cyberwareUpdateEvent);
         }

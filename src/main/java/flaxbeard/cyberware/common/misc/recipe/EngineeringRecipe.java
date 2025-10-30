@@ -3,7 +3,6 @@ package flaxbeard.cyberware.common.misc.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.item.BlueprintItem;
 import lombok.Getter;
 import net.minecraft.inventory.IInventory;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class EngineeringRecipe implements IRecipe<IInventory> {
     private final @Nonnull ResourceLocation id;

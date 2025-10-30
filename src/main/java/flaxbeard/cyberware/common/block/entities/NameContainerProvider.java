@@ -41,7 +41,7 @@ public class NameContainerProvider<T extends NameContainerProvider<T>> extends T
         super.load(state, tag);
 
         if (tag.contains("CustomName", 8)) {
-            customName = new StringTextComponent(tag.getString("CustomName"));
+            customName = ITextComponent.Serializer.fromJson(tag.getString("CustomName"));
         }
     }
 
@@ -50,7 +50,7 @@ public class NameContainerProvider<T extends NameContainerProvider<T>> extends T
     public CompoundNBT save(@Nonnull CompoundNBT tag) {
         super.save(tag);
         if (hasCustomName()) {
-            tag.putString("CustomName", customName.getString());
+            tag.putString("CustomName", ITextComponent.Serializer.toJson(customName));
         }
         return tag;
     }
@@ -70,8 +70,6 @@ public class NameContainerProvider<T extends NameContainerProvider<T>> extends T
     @Override
     public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
         if (!tClass.isInstance(this)) return null;
-        @SuppressWarnings("unchecked")
-        T castedEntity = (T) this;
-        return container.apply(id, inventory, castedEntity);
+        return container.apply(id, inventory, tClass.cast(this));
     }
 }

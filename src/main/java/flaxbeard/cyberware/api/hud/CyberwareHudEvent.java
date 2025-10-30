@@ -2,7 +2,6 @@ package flaxbeard.cyberware.api.hud;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.MainWindow;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.util.ArrayList;
@@ -14,16 +13,13 @@ public class CyberwareHudEvent extends Event {
     @Setter
     @Getter
     private boolean hudjackAvailable;
-    private final MainWindow scaledResolution;
+    @Getter
+    private final ScaledResolution resolution;
 
-    public CyberwareHudEvent(MainWindow scaledResolution, boolean hudjackAvailable) {
+    public CyberwareHudEvent(ScaledResolution resolution, boolean hudjackAvailable) {
         super();
-        this.scaledResolution = scaledResolution;
+        this.resolution = resolution;
         this.hudjackAvailable = hudjackAvailable;
-    }
-
-    public MainWindow getResolution() {
-        return scaledResolution;
     }
 
     public void addElement(IHudElement element) {

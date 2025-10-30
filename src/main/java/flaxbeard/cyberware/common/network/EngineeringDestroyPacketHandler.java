@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -29,5 +30,13 @@ public class EngineeringDestroyPacketHandler {
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    public static void encode(EngineeringDestroyPacketHandler pkt, PacketBuffer buf) {
+        buf.writeInt(pkt.containerId);
+    }
+
+    public static EngineeringDestroyPacketHandler decode(PacketBuffer buf) {
+        return new EngineeringDestroyPacketHandler(buf.readInt());
     }
 }

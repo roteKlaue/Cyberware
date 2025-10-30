@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,22 +30,32 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
     private final boolean isManufactured;
     private final @Nullable RegistryObject<CyberwareItem> manufactured;
 
-    public CyberwareItem(BodySlot slot, int essence,
-                          List<RegistryObject<Item>> incompatible,
-                          @Nullable List<RegistryObject<Item>> requirement) {
+    public CyberwareItem(@Nonnull BodySlot slot, int essence,
+                         @Nonnull List<RegistryObject<Item>> incompatible,
+                         @Nullable List<RegistryObject<Item>> requirement) {
 
         this(slot, essence, incompatible, requirement, null);
     }
 
-    public CyberwareItem(BodySlot slot, int essence,
-                         List<RegistryObject<Item>> incompatible,
+    public CyberwareItem(@Nonnull BodySlot slot, int essence,
+                         @Nonnull List<RegistryObject<Item>> incompatible,
                          @Nullable List<RegistryObject<Item>> requirement,
-                         RegistryObject<CyberwareItem> manufactured) {
+                         @Nullable RegistryObject<CyberwareItem> manufactured) {
         this.slot = slot;
         this.essence = essence;
-        this.requirement = requirement;
+        this.requirement = requirement == null ? new ArrayList<>() : requirement;
         this.incompatible = incompatible;
         this.manufactured = manufactured;
+        this.isManufactured = manufactured != null;
+    }
+
+    public CyberwareItem(@Nonnull CyberwareItem cyberwareItem) {
+        this.slot = cyberwareItem.slot;
+        this.essence = cyberwareItem.essence;
+        this.requirement = new ArrayList<>(cyberwareItem.requirement == null?
+                new ArrayList<>() : cyberwareItem.requirement);
+        this.incompatible = new ArrayList<>(cyberwareItem.incompatible);
+        this.manufactured = cyberwareItem.manufactured;
         this.isManufactured = manufactured != null;
     }
 
@@ -238,5 +249,77 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
     @Override
     public int getEssenceCost(ItemStack stack) {
         return 0;
+    }
+
+    public static CyberwareItemBuilder builder()  {
+        return CyberwareItemBuilder.create();
+    }
+
+    public static class CyberwareItemBuilder {
+        private BodySlot slot;
+        private int essence;
+        private Set<RegistryObject<Item>> incompatible = new HashSet<>();
+        private List<RegistryObject<Item>> requirement = null;
+        private RegistryObject<CyberwareItem> manufactured = null;
+
+        private CyberwareItemBuilder() {}
+
+        public static CyberwareItemBuilder create() {
+            return new CyberwareItemBuilder();
+        }
+
+        public CyberwareItemBuilder slot(BodySlot slot) {
+            if (slot == null) return this;
+            this.slot = slot;
+            return this;
+        }
+
+        public CyberwareItemBuilder essence(int essence) {
+            if (essence < 0) return this;
+            this.essence = essence;
+            return this;
+        }
+
+        public CyberwareItemBuilder incompatible(List<RegistryObject<Item>> incompatible) {
+            if (incompatible == null || incompatible.isEmpty()) return this;
+            this.incompatible.addAll(incompatible);
+            return this;
+        }
+
+        public CyberwareItemBuilder addIncompatible(RegistryObject<Item> item) {
+            if (item == null) return this;
+            this.incompatible.add(item);
+            return this;
+        }
+
+        public CyberwareItemBuilder requirement(List<RegistryObject<Item>> requirement) {
+            if (requirement == null || requirement.isEmpty()) return this;
+            this.requirement = requirement;
+            return this;
+        }
+
+        public CyberwareItemBuilder addRequirement(RegistryObject<Item> item) {
+            if (item == null) return this;
+            if (this.requirement == null) this.requirement = new ArrayList<>();
+            this.requirement.add(item);
+            return this;
+        }
+
+        public CyberwareItemBuilder manufactured(RegistryObject<CyberwareItem> manufactured) {
+            if (manufactured == null) return this;
+            this.manufactured = manufactured;
+            return this;
+        }
+
+        public CyberwareItemBuilder manufactured(CyberwareItem item) {
+            this.manufactured = RegistryObject.of(item.getRegistryName(), ForgeRegistries.ITEMS);
+            return this;
+        }
+
+        public CyberwareItem build() {
+            if (slot == null) throw new IllegalStateException("CyberwareItem requires a BodySlot.");
+            if (incompatible == null) throw new IllegalStateException("CyberwareItem requires a non-null incompatible list.");
+            return new CyberwareItem(slot, essence, new ArrayList<>(incompatible), requirement, manufactured);
+        }
     }
 }

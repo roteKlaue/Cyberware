@@ -21,14 +21,23 @@ public class CyberwarePackets {
         NETWORK.registerMessage(
                 packetId++,
                 EngineeringDestroyPacketHandler.class,
-                (pkt, buf) -> buf.writeInt(pkt.getContainerId()),
-                buf -> new EngineeringDestroyPacketHandler(buf.readInt()),
+                EngineeringDestroyPacketHandler::encode,
+                EngineeringDestroyPacketHandler::decode,
                 EngineeringDestroyPacketHandler::handle
         );
-        NETWORK.registerMessage(packetId++,
+        NETWORK.registerMessage(
+                packetId++,
                 UpdateHudColorPacket.class,
                 UpdateHudColorPacket::encode,
                 UpdateHudColorPacket::decode,
-                UpdateHudColorPacket::handle);
+                UpdateHudColorPacket::handle
+        );
+        NETWORK.registerMessage(
+                packetId++,
+                SyncHudDataPacket.class,
+                SyncHudDataPacket::encode,
+                SyncHudDataPacket::decode,
+                SyncHudDataPacket::handle
+        );
     }
 }

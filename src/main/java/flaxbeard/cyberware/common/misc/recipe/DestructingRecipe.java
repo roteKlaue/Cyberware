@@ -86,7 +86,8 @@ public class DestructingRecipe implements IRecipe<IInventory> {
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
-        public DestructingRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+        @Nonnull
+        public DestructingRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
             JsonObject inputObj = JSONUtils.getAsJsonObject(json, "input");
             String inputId = JSONUtils.getAsString(inputObj, "item");
             Item inputItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(inputId));

@@ -7,41 +7,23 @@ import net.minecraft.nbt.CompoundNBT;
 public class EnableDisableHelper {
     public static final String ENABLED_STR = "~enabled";
 
-    public static boolean isEnabled(ItemStack stack)
-    {
+    public static boolean isEnabled(ItemStack stack) {
         if (stack.isEmpty()) return false;
 
         CompoundNBT tagCompound = CyberwareAPI.getCyberwareNBT(stack);
-        if (!tagCompound.contains(ENABLED_STR))
-        {
-            return true;
-        }
+        if (!tagCompound.contains(ENABLED_STR)) return true;
 
         return tagCompound.getBoolean(ENABLED_STR);
     }
 
-    public static void toggle(ItemStack stack)
-    {
+    public static void toggle(ItemStack stack) {
         CompoundNBT tagCompound = CyberwareAPI.getCyberwareNBT(stack);
-        if (isEnabled(stack))
-        {
-            tagCompound.putBoolean(ENABLED_STR, false);
-        }
-        else
-        {
-            tagCompound.remove(ENABLED_STR);
-        }
+        if (isEnabled(stack)) tagCompound.putBoolean(ENABLED_STR, false);
+        else tagCompound.remove(ENABLED_STR);
     }
 
-    public static String getUnlocalizedLabel(ItemStack stack)
-    {
-        if (isEnabled(stack))
-        {
-            return "cyberware.gui.active.disable";
-        }
-        else
-        {
-            return "cyberware.gui.active.enable";
-        }
+    public static String getUnlocalizedLabel(ItemStack stack) {
+        if (isEnabled(stack)) return "cyberware.gui.active.disable";
+        return "cyberware.gui.active.enable";
     }
 }

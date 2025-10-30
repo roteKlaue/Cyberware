@@ -1,10 +1,10 @@
 package flaxbeard.cyberware.api.hud;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lombok.Setter;
-import net.minecraft.client.MainWindow;
 import net.minecraft.entity.player.PlayerEntity;
 
-public abstract class HudElementBase implements IHudElement {
+public abstract class BaseHudElement implements IHudElement {
     private int defaultX = 0;
     private int defaultY = 0;
     private int x = 0;
@@ -21,27 +21,25 @@ public abstract class HudElementBase implements IHudElement {
     private EnumAnchorHorizontal hAnchor = EnumAnchorHorizontal.LEFT;
     private EnumAnchorVertical vAnchor = EnumAnchorVertical.TOP;
 
-    public HudElementBase(String name) {
+    public BaseHudElement(String name) {
         this.name = name;
     }
 
     @Override
-    public void render(PlayerEntity entityPlayer, MainWindow resolution, boolean isHUDjackAvailable, boolean isConfigOpen, float partialTicks) {
+    public void render(PlayerEntity player, ScaledResolution resolution, boolean isHUDjackAvailable, boolean isConfigOpen, float partialTicks, MatrixStack mx) {
         int x = getX();
         int y = getY();
-        if (getHorizontalAnchor() == EnumAnchorHorizontal.RIGHT)
-        {
-            x = resolution.getGuiScaledWidth() - x - getWidth();
+        if (getHorizontalAnchor() == EnumAnchorHorizontal.RIGHT) {
+            x = resolution.width - x - getWidth();
         }
-        if (getVerticalAnchor() == EnumAnchorVertical.BOTTOM)
-        {
-            y = resolution.getGuiScaledHeight() - y - getHeight();
+        if (getVerticalAnchor() == EnumAnchorVertical.BOTTOM) {
+            y = resolution.height - y - getHeight();
         }
 
-        renderElement(x, y, entityPlayer, resolution, isHUDjackAvailable, isConfigOpen, partialTicks);
+        renderElement(x, y, player, resolution, isHUDjackAvailable, isConfigOpen, partialTicks, mx);
     }
 
-    public abstract void renderElement(int x, int y, PlayerEntity entityPlayer, MainWindow resolution, boolean hudjackAvailable, boolean isConfigOpen, float partialTicks);
+    public abstract void renderElement(int x, int y, PlayerEntity player, ScaledResolution resolution, boolean hudjackAvailable, boolean configOpen, float partialTicks, MatrixStack mx);
 
     public void setDefaultX(int x) {
         this.defaultX = x;

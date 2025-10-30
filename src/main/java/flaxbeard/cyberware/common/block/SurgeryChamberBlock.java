@@ -1,15 +1,17 @@
 package flaxbeard.cyberware.common.block;
 
+import flaxbeard.cyberware.common.block.entities.SurgeryBlockEntity;
 import flaxbeard.cyberware.common.block.entities.SurgeryChamberBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -108,7 +110,14 @@ public class SurgeryChamberBlock extends TallBlock<SurgeryChamberBlockEntity> {
     public ActionResultType use(@Nonnull BlockState state, World world, @Nonnull BlockPos pos,
                                 @Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull BlockRayTraceResult hit) {
         if (!world.isClientSide) {
-            toggleDoor(world, pos, state);
+            if (canOpen(world, pos, state)) {
+                toggleDoor(world, pos, state);
+
+                SurgeryBlockEntity te = getSurgeryBlockEntity(world, pos, isTop(state));
+                if (te != null) {
+                    te.notifyChange();
+                }
+            }
         }
         return ActionResultType.sidedSuccess(world.isClientSide);
     }
@@ -128,25 +137,50 @@ public class SurgeryChamberBlock extends TallBlock<SurgeryChamberBlockEntity> {
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(@Nonnull BlockState state,
-                               @Nonnull IBlockReader worldIn,
-                               @Nonnull BlockPos pos,
-                               @Nonnull ISelectionContext context) {
-        Direction facing = state.getValue(FACING);
-        boolean open = state.getValue(OPEN);
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+        if (context.getEntity() != null) return VoxelShapes.block();
+        return getCollisionShape(state, worldIn, pos, context);
+    }
 
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public  VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+        boolean open = state.getValue(OPEN);
         if (isTop(state)) {
             return !open ? TOP_CLOSED :
-                    getDirectionalShape(facing, TOP_EAST, TOP_SOUTH, TOP_WEST, TOP_NORTH);
+                    getDirectionalShape(state, TOP_SOUTH, TOP_WEST, TOP_NORTH, TOP_EAST);
         } else {
             return !open ? BOTTOM_CLOSED :
-                    getDirectionalShape(facing, BOTTOM_EAST, BOTTOM_SOUTH, BOTTOM_WEST, BOTTOM_NORTH);
+                    getDirectionalShape(state, BOTTOM_SOUTH, BOTTOM_WEST, BOTTOM_NORTH, BOTTOM_EAST);
         }
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public PushReaction getPistonPushReaction(@Nonnull BlockState state) {
+        return PushReaction.DESTROY;
     }
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(OPEN);
+    }
+
+    private boolean canOpen(World world, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+        SurgeryBlockEntity te = getSurgeryBlockEntity(world, pos, isTop(state));
+        return te == null || te.canOpen();
+    }
+
+    private SurgeryBlockEntity getSurgeryBlockEntity(World world, @Nonnull BlockPos pos, boolean top) {
+        pos = pos.above();
+        if (!top) pos = pos.above();
+
+        TileEntity te = world.getBlockEntity(pos);
+        if (!(te instanceof SurgeryBlockEntity)) return null;
+
+        return (SurgeryBlockEntity) te;
     }
 }

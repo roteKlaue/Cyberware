@@ -7,7 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -58,8 +57,7 @@ public class ComponentBoxBlock extends DirectionalBlock implements IWaterLoggabl
                                @Nonnull IBlockReader worldIn,
                                @Nonnull BlockPos pos,
                                @Nonnull ISelectionContext context) {
-        Direction facing = state.getValue(FACING);
-        return getDirectionalShape(facing, SHAPE_EW, SHAPE_NS, SHAPE_EW, SHAPE_NS);
+        return getDirectionalShape(state, SHAPE_NS, SHAPE_EW, SHAPE_NS, SHAPE_EW);
     }
 
     @Override
@@ -116,7 +114,7 @@ public class ComponentBoxBlock extends DirectionalBlock implements IWaterLoggabl
                     ComponentBoxBlockEntity comp = (ComponentBoxBlockEntity) entity;
                     CompoundNBT beTag = comp.saveToItemStack();
                     stack.getOrCreateTag().put("BlockEntityTag", beTag);
-                    stack.setHoverName(comp.getCustomName());
+                    if (comp.hasCustomName()) stack.setHoverName(comp.getDisplayName());
                 }
                 player.setItemInHand(hand, stack);
                 world.removeBlock(position, false);

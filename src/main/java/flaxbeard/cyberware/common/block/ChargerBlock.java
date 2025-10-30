@@ -1,6 +1,5 @@
 package flaxbeard.cyberware.common.block;
 
-
 import flaxbeard.cyberware.common.block.entities.ChargerBlockEntity;
 import flaxbeard.cyberware.common.block.entities.CyberwareBlockEntities;
 
