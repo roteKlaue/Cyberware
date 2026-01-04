@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class HudHandler {
@@ -187,7 +186,7 @@ public class HudHandler {
 
         if (cachePromptToOpenMenu) {
             String textOpenMenu = new TranslationTextComponent(
-                    "overclockedorgans.gui.open_menu",
+                    "gui.overclockedorgans.open_menu",
                     KeyBinds.menu.getTranslatedKeyMessage()
             ).getString();
             FontRenderer font = Minecraft.getInstance().font;

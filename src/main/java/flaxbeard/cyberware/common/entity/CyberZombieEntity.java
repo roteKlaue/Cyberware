@@ -20,4 +20,9 @@ public class CyberZombieEntity extends ZombieEntity {
                 .add(Attributes.MOVEMENT_SPEED, 0.23D)
                 .add(Attributes.ATTACK_DAMAGE, 6.0D);
     }
+
+    @Override
+    protected boolean isSunBurnTick() {
+        return false;
+    }
 }

@@ -18,7 +18,7 @@ public class ClientUtils {
 
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        bufferBuilder.vertex(matrix, x,         y + height, 0.0F)
+        bufferBuilder.vertex(matrix, x, y + height, 0.0F)
                 .uv(textureX * TEXTURE_SCALE, (textureY + height) * TEXTURE_SCALE)
                 .endVertex();
 
@@ -35,11 +35,5 @@ public class ClientUtils {
                 .endVertex();
 
         tessellator.end();
-    }
-
-    public static void renderBorder(MatrixStack ms, int elemX, int elemY, int width, int height) {
-    }
-
-    public static void draw(MatrixStack ms, int buttonsX, int buttonsY, int i, int i1, int i2, int i3) {
     }
 }

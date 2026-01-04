@@ -190,5 +190,8 @@
   "gui.overclockedorgans.scanner_saying.65":"Commencing Spatial Simulation",
   "gui.overclockedorgans.scanner_saying.66":"Instantiating Child Elements",
   "gui.overclockedorgans.scanner_saying.67":"Wiping System32",
-  "gui.overclockedorgans.scanner_saying.68":"Remembering Lycaon"
+  "gui.overclockedorgans.scanner_saying.68":"Remembering Lycaon",
+
+  "keybinds.overclockedorgans.menu": "Open Menu",
+  "keybinds.overclockedorgans.category": "Cyberware"
 }
