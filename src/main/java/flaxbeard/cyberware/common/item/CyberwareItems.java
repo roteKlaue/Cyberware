@@ -1,6 +1,5 @@
 package flaxbeard.cyberware.common.item;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.item.equipment.CyberwareArmorItem;

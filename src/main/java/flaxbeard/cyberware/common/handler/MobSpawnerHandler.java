@@ -5,6 +5,7 @@ import flaxbeard.cyberware.common.CyberwareConfig;
 import flaxbeard.cyberware.common.entity.CyberwareEntities;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -17,6 +18,7 @@ public class MobSpawnerHandler {
     public static void onEntitySpawn(BiomeLoadingEvent event) {
         if (event.getSpawns().getSpawner(EntityClassification.MONSTER) == null) return;
         if (event.getSpawns().getSpawner(EntityClassification.MONSTER).stream().anyMatch(e -> e.type.equals(EntityType.ZOMBIE))) return;
+        if (event.getCategory().equals(Biome.Category.NETHER) || event.getCategory().equals(Biome.Category.THEEND)) return;
         event.getSpawns().addSpawn(
                 EntityClassification.MONSTER,
                 new MobSpawnInfo.Spawners(
