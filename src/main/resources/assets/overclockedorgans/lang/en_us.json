@@ -195,5 +195,6 @@
   "keybinds.overclockedorgans.menu": "Open Menu",
   "keybinds.overclockedorgans.category": "Cyberware",
 
-  "effect.overclockedorgans.neuropozyne": "Neuropozyne"
+  "effect.overclockedorgans.neuropozyne": "Anti-Rejection",
+  "effect.overclockedorgans.rejection": "Rejection"
 }

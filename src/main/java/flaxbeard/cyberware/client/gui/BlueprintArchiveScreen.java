@@ -48,10 +48,10 @@ public class BlueprintArchiveScreen extends ContainerScreen<BlueprintArchiveCont
 
     @Override
     protected void renderLabels(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
+        renderStoredItemsAboveBlueprints(matrixStack);
         font.draw(matrixStack, this.title.getString(), 8, 6, 4210752);
         font.draw(matrixStack, this.inventory.getDisplayName().getString(),
                 8, this.imageHeight - 84, 4210752);
-        renderStoredItemsAboveBlueprints(matrixStack);
     }
 
     private void renderStoredItemsAboveBlueprints(@Nonnull MatrixStack matrixStack) {
@@ -76,6 +76,7 @@ public class BlueprintArchiveScreen extends ContainerScreen<BlueprintArchiveCont
                     int drawX = slotX + H_CENTER - 1;
                     int drawY = slotY - ITEM_SIZE - VERTICAL_GAP + SLOT_SIZE;
 
+                    this.itemRenderer.blitOffset = 400.0F;
                     this.itemRenderer.renderAndDecorateItem(this.minecraft.player, stored, drawX, drawY);
                     this.itemRenderer.renderGuiItemDecorations(this.font, stored, drawX, drawY, null);
                 }
