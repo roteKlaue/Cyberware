@@ -19,6 +19,7 @@ public class MobSpawnerHandler {
         if (event.getSpawns().getSpawner(EntityClassification.MONSTER) == null) return;
         if (event.getSpawns().getSpawner(EntityClassification.MONSTER).stream().anyMatch(e -> e.type.equals(EntityType.ZOMBIE))) return;
         if (event.getCategory().equals(Biome.Category.NETHER) || event.getCategory().equals(Biome.Category.THEEND)) return;
+        if (!CyberwareConfig.MOBS_ENABLE_CYBER_ZOMBIES.get()) return;
         event.getSpawns().addSpawn(
                 EntityClassification.MONSTER,
                 new MobSpawnInfo.Spawners(

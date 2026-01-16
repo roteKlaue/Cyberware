@@ -1,6 +1,10 @@
 {
   "replace": false,
   "entries": [
-    "overclockedorgans:surgery_chamber"
+    "overclockedorgans:surgery_chamber",
+    "overclockedorgans:surgery_chamber_bastion_bridge",
+    "overclockedorgans:surgery_chamber_bastion_other",
+    "overclockedorgans:surgery_chamber_bastion_hoglin_stable",
+    "overclockedorgans:surgery_chamber_bastion_treasure"
   ]
 }

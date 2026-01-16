@@ -30,7 +30,7 @@ public class LootModifierHandler {
         @Nonnull
         @Override
         protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-            if (context.getRandom().nextFloat() > 0.4) {
+            if (context.getRandom().nextFloat() > 0.6) {
                 generatedLoot.add(new ItemStack(item, 1));
             }
             return generatedLoot;
@@ -52,10 +52,66 @@ public class LootModifierHandler {
         }
     }
 
+    public static class ModularLootModifier extends LootModifier {
+        private final Item item;
+        private final float probability;
+        private final int minAmount;
+        private final int maxAmount;
+
+        public ModularLootModifier(ILootCondition[] conditionsIn, Item item, float probability, int minAmount, int maxAmount) {
+            super(conditionsIn);
+            this.item = item;
+            this.probability = probability;
+            this.minAmount = minAmount;
+            this.maxAmount = maxAmount;
+        }
+
+        @Nonnull
+        @Override
+        protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+            if (context.getRandom().nextFloat() <= probability) {
+                int amount = minAmount;
+                if (maxAmount > minAmount) {
+                    amount += context.getRandom().nextInt(maxAmount - minAmount + 1);
+                }
+                generatedLoot.add(new ItemStack(item, amount));
+            }
+            return generatedLoot;
+        }
+
+        public static class Serializer extends GlobalLootModifierSerializer<ModularLootModifier> {
+            @Override
+            public ModularLootModifier read(ResourceLocation name, JsonObject object, ILootCondition[] conditionsIn) {
+                Item addition = ForgeRegistries.ITEMS.getValue(
+                        new ResourceLocation(object.get("addition").getAsString())
+                );
+                float probability = object.has("probability") ? object.get("probability").getAsFloat() : 1.0f;
+                int min = object.has("min") ? object.get("min").getAsInt() : 1;
+                int max = object.has("max") ? object.get("max").getAsInt() : min;
+
+                return new ModularLootModifier(conditionsIn, addition, probability, min, max);
+            }
+
+            @Override
+            public JsonObject write(ModularLootModifier instance) {
+                JsonObject json = makeConditions(instance.conditions);
+                json.addProperty("addition", ForgeRegistries.ITEMS.getKey(instance.item).toString());
+                json.addProperty("probability", instance.probability);
+                json.addProperty("min", instance.minAmount);
+                json.addProperty("max", instance.maxAmount);
+                return json;
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
         event.getRegistry().registerAll(
-                new SurgeryBlockEntryModifier.Serializer().setRegistryName(new ResourceLocation(OverclockedOrgans.MOD_ID,"surgery_chamber"))
+                new SurgeryBlockEntryModifier.Serializer().setRegistryName(new ResourceLocation(OverclockedOrgans.MOD_ID,"surgery_chamber")),
+                new SurgeryBlockEntryModifier.Serializer().setRegistryName(new ResourceLocation(OverclockedOrgans.MOD_ID, "surgery_chamber_bastion_bridge")),
+                new SurgeryBlockEntryModifier.Serializer().setRegistryName(new ResourceLocation(OverclockedOrgans.MOD_ID, "surgery_chamber_bastion_other")),
+                new SurgeryBlockEntryModifier.Serializer().setRegistryName(new ResourceLocation(OverclockedOrgans.MOD_ID, "surgery_chamber_bastion_hoglin_stable")),
+                new SurgeryBlockEntryModifier.Serializer().setRegistryName(new ResourceLocation(OverclockedOrgans.MOD_ID, "surgery_chamber_bastion_treasure"))
         );
     }
 }

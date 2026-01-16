@@ -193,5 +193,7 @@
   "gui.overclockedorgans.scanner_saying.68":"Remembering Lycaon",
 
   "keybinds.overclockedorgans.menu": "Open Menu",
-  "keybinds.overclockedorgans.category": "Cyberware"
+  "keybinds.overclockedorgans.category": "Cyberware",
+
+  "effect.overclockedorgans.neuropozyne": "Neuropozyne"
 }
