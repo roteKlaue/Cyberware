@@ -52,6 +52,7 @@ public class CyberwareItems {
     public static RegistryObject<CyberwareArmorItem> SHADES2;
     public static RegistryObject<CyberwareArmorItem> JACKET;
     public static RegistryObject<CyberwareArmorItem> TRENCHCOAT;
+    public static RegistryObject<NeuropozyneItem> NEUROPOZYNE;
 
     public static final RegistryObject<BlueprintItem> BLUEPRINT = ITEMS.register("blueprint",
             BlueprintItem::new);
@@ -66,12 +67,14 @@ public class CyberwareItems {
     );
 
     static {
-        if (CyberwareConfig.ENABLE_KATANA.get()) {
+        boolean katana = CyberwareConfig.ENABLE_KATANA.get();
+        if (katana) {
             KATANA = ITEMS.register("katana",
                     () -> new CyberwareSwordItem(CyberwareItemTiers.KATANA,3,-2.4f, new Item.Properties()));
         }
 
-        if (CyberwareConfig.ENABLE_CLOTHES.get()) {
+        boolean clothes = CyberwareConfig.ENABLE_CLOTHES.get();
+        if (clothes) {
             SHADES = registerArmor("shades",
                     CyberwareArmorMaterials.SHADES, EquipmentSlotType.HEAD);
             SHADES2 = registerArmor("shades2",
@@ -81,6 +84,10 @@ public class CyberwareItems {
             TRENCHCOAT = registerArmor("trenchcoat",
                     CyberwareArmorMaterials.TRENCHCOAT, EquipmentSlotType.CHEST);
         }
+
+        NEUROPOZYNE = registerItem("neuropozyne", () -> new NeuropozyneItem(
+                (katana || clothes) ? CreativeModeTabs.EQUIPMENT_GROUP : CreativeModeTabs.MANUFACTURED_GROUP
+        ));
     }
 
     private static RegistryObject<Item> registerItem(@Nonnull String name) {
