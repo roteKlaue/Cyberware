@@ -39,5 +39,12 @@ public class CyberwarePackets {
                 SyncHudDataPacket::decode,
                 SyncHudDataPacket::handle
         );
+        NETWORK.registerMessage(
+                packetId++,
+                EngineeringSwitchArchivePacket.class,
+                EngineeringSwitchArchivePacket::encode,
+                EngineeringSwitchArchivePacket::decode,
+                EngineeringSwitchArchivePacket::handle
+        );
     }
 }

@@ -25,6 +25,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
@@ -37,6 +38,7 @@ import net.minecraftforge.items.wrapper.RangedWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +49,7 @@ public class EngineeringTableBlockEntity extends NameContainerProvider<Engineeri
     private final LazyOptional<IItemHandler> sideHandler = LazyOptional.of(() -> new RangedWrapper(slots, 1, 2));
     private final LazyOptional<IItemHandler> bottomHandler = LazyOptional.of(() -> new RangedWrapper(slots, 2, 8));
 
+    public HashMap<String, BlockPos> lastPlayerArchive = new HashMap<>();
     public float clickedTime;
 
     public EngineeringTableBlockEntity() {

@@ -1,33 +1,98 @@
 package flaxbeard.cyberware.client.gui;
 
+import flaxbeard.cyberware.common.block.ComponentBoxBlock;
+import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
+import flaxbeard.cyberware.common.block.entities.ComponentBoxBlockEntity;
 import flaxbeard.cyberware.common.block.entities.EngineeringTableBlockEntity;
+
+import lombok.Getter;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 
 public class EngineeringTableContainer extends Container {
+    @Getter
     private final EngineeringTableBlockEntity blockEntity;
 
-    public EngineeringTableContainer(int windowId, PlayerInventory inv, EngineeringTableBlockEntity tile) {
-        super(CyberwareContainers.ENGINEERING.get(), windowId);
-        this.blockEntity = tile;
+    public BlueprintArchiveBlockEntity archive;
+    public int archiveIndex = 0;
+    public ArrayList<BlueprintArchiveBlockEntity> archiveList = new ArrayList<>();
 
-        addSlot(new EngineeringSlot(blockEntity.slots, 0, 15, 20));
-        addSlot(new EngineeringSlot(blockEntity.slots, 1, 15, 53));
-        addSlot(new EngineeringSlot(blockEntity.slots, 2, 71, 17));
-        addSlot(new EngineeringSlot(blockEntity.slots, 3, 89, 17));
-        addSlot(new EngineeringSlot(blockEntity.slots, 4, 71, 35));
-        addSlot(new EngineeringSlot(blockEntity.slots, 5, 89, 35));
-        addSlot(new EngineeringSlot(blockEntity.slots, 6, 71, 53));
-        addSlot(new EngineeringSlot(blockEntity.slots, 7, 89, 53));
-        addSlot(new EngineeringSlot(blockEntity.slots, 8, 115, 53));
-        addSlot(new EngineeringOutputSlot(blockEntity, 9, 145, 21));
+    public Object componentBox;
+    public ArrayList<Object> componentBoxList = new ArrayList<>();
+    public int componentBoxIndex = 0;
+
+    public EngineeringTableContainer(int windowId, PlayerInventory inv, EngineeringTableBlockEntity blockEntity) {
+        super(CyberwareContainers.ENGINEERING.get(), windowId);
+        this.blockEntity = blockEntity;
+
+        archive = null;
+        componentBox = null;
+        BlockPos target = null;
+
+        // if (blockEntity.lastPlayerArchive.containsKey(uuid))
+        // {
+        //     target = blockEntity.lastPlayerArchive.get(uuid);
+        // }
+
+        for (int y = -2; y < 2; y++) {
+            for (int x = -2; x < 3; x++) {
+                for (int z = -2; z < 3; z++) {
+                    BlockPos pos = blockEntity.getBlockPos().offset(x, y, z);
+                    TileEntity tileEntity = null;
+                    if (blockEntity.getLevel() != null) {
+                        tileEntity = blockEntity.getLevel().getBlockEntity(pos);
+                    }
+                    if (tileEntity instanceof BlueprintArchiveBlockEntity) {
+                        if (archive == null || tileEntity.getBlockPos().equals(target)) {
+                            archive = (BlueprintArchiveBlockEntity) tileEntity;
+                            archiveIndex = archiveList.size();
+                        }
+
+                        archiveList.add((BlueprintArchiveBlockEntity) tileEntity);
+                    }
+                }
+            }
+        }
+
+        for (int y = -2; y < 2; y++) {
+            for (int x = -2; x < 3; x++) {
+                for (int z = -2; z < 3; z++) {
+                    BlockPos pos = blockEntity.getBlockPos().offset(x, y, z);
+                    TileEntity tileEntity = blockEntity.getLevel().getBlockEntity(pos);
+                    if (tileEntity instanceof ComponentBoxBlockEntity) {
+                        if (componentBox == null) {
+                            componentBox = tileEntity;
+                            componentBoxIndex = componentBoxList.size();
+                        }
+
+                        componentBoxList.add(tileEntity);
+                    }
+                }
+            }
+        }
+
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 0, 15, 20));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 1, 15, 53));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 2, 71, 17));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 3, 89, 17));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 4, 71, 35));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 5, 89, 35));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 6, 71, 53));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 7, 89, 53));
+        addSlot(new EngineeringSlot(this.blockEntity.slots, 8, 115, 53));
+        addSlot(new EngineeringOutputSlot(this.blockEntity, 9, 145, 21));
 
         int startX = 8;
         int startY = 84;
@@ -147,6 +212,19 @@ public class EngineeringTableContainer extends Container {
         blockEntity.destruct();
     }
 
+    public void prevArchive() {
+    }
+
+    public void nextArchive() {
+    }
+
+    public void prevComponentBox() {
+    }
+
+    public void nextComponentBox() {
+
+    }
+
     public class EngineeringSlot extends SlotItemHandler {
         public EngineeringSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
@@ -168,6 +246,12 @@ public class EngineeringTableContainer extends Container {
         public EngineeringOutputSlot(EngineeringTableBlockEntity entity, int index, int xPosition, int yPosition) {
             super(entity.slots, index, xPosition, yPosition);
             this.entity = entity;
+        }
+
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            blockEntity.refreshCraftingResult();
         }
 
         @Override

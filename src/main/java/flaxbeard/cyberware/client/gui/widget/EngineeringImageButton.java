@@ -7,26 +7,45 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
+/**
+ * An image-based button for GUIs.
+ *
+ * <p>This button renders a portion of a texture and switches to an alternate
+ * texture region while pressed. It supports a custom press callback.</p>
+ */
 public class EngineeringImageButton extends AbstractButton {
     private final ResourceLocation texture;
     private final int texU, texV;
     private final int pressedU, pressedV;
     private final int texWidth, texHeight;
-    private final IPressable onPress;
+    private final Consumer<EngineeringImageButton> onPress;
 
     private boolean isPressed = false;
 
-    public interface IPressable {
-        void onPress(EngineeringImageButton button);
-    }
-
+    /**
+     * Creates a new image button.
+     *
+     * @param x         X position on screen
+     * @param y         Y position on screen
+     * @param width     Button width in pixels
+     * @param height    Button height in pixels
+     * @param u         Texture U coordinate for normal state
+     * @param v         Texture V coordinate for normal state
+     * @param pressedU Texture U coordinate for pressed state
+     * @param pressedV Texture V coordinate for pressed state
+     * @param texture  Texture atlas resource
+     * @param texWidth Total texture width
+     * @param texHeight Total texture height
+     * @param onPress  Callback when the button is pressed
+     */
     public EngineeringImageButton(int x, int y, int width, int height,
                                   int u, int v,
                                   int pressedU, int pressedV,
                                   ResourceLocation texture,
                                   int texWidth, int texHeight,
-                                  IPressable onPress) {
+                                  Consumer<EngineeringImageButton> onPress) {
         super(x, y, width, height, StringTextComponent.EMPTY);
         this.texU = u;
         this.texV = v;
@@ -60,7 +79,7 @@ public class EngineeringImageButton extends AbstractButton {
     @Override
     public void onPress() {
         if (onPress == null) return;
-        onPress.onPress(this);
+        onPress.accept(this);
     }
 
     @Override

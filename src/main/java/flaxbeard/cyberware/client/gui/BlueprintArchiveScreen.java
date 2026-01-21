@@ -76,7 +76,7 @@ public class BlueprintArchiveScreen extends ContainerScreen<BlueprintArchiveCont
                     int drawX = slotX + H_CENTER - 1;
                     int drawY = slotY - ITEM_SIZE - VERTICAL_GAP + SLOT_SIZE;
 
-                    this.itemRenderer.blitOffset = 400.0F;
+                    this.itemRenderer.blitOffset = 201.0F;
                     this.itemRenderer.renderAndDecorateItem(this.minecraft.player, stored, drawX, drawY);
                     this.itemRenderer.renderGuiItemDecorations(this.font, stored, drawX, drawY, null);
                 }
