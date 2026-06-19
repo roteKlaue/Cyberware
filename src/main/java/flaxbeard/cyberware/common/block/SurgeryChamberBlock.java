@@ -122,8 +122,12 @@ public class SurgeryChamberBlock extends TallBlock<SurgeryChamberBlockEntity> {
         return ActionResultType.sidedSuccess(world.isClientSide);
     }
 
-    private void toggleDoor(World world, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+    public void toggleDoor(World world, @Nonnull BlockPos pos, @Nonnull BlockState state) {
         boolean newOpen = !state.getValue(OPEN);
+        toggleDoor(world, pos, state, newOpen);
+    }
+
+    public void toggleDoor(World world, @Nonnull BlockPos pos, @Nonnull BlockState state, boolean newOpen) {
         BlockState newState = state.setValue(OPEN, newOpen);
         world.setBlock(pos, newState, 2);
 
