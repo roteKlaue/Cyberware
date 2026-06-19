@@ -1,16 +1,20 @@
 package flaxbeard.cyberware.common.item;
 
-import flaxbeard.cyberware.api.item.EnableDisableHelper;
-import flaxbeard.cyberware.api.item.IHudjack;
-import flaxbeard.cyberware.api.item.IMenuItem;
+import flaxbeard.cyberware.api.item.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
+import net.minecraftforge.fml.RegistryObject;
 
 public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack {
-    public EyeUpgradeItem() {
-        super(BodySlot.EYES, 0, new ArrayList<>(), new ArrayList<>());
+    private static final float[] ENABLED_COLOR = new float[] { 1F, 0F, 0F };
+    private static final CyberwareProperties PROPERTIES = new CyberwareProperties()
+                        .slot(ICyberware.BodySlot.EYES)
+                        .essence(0)
+                        .maxInstallations(1)
+                        .incompatibleWith(CyberwareItems.CYBER_EYES_MANUFACTURED, CyberwareItems.CYBER_EYES_SALVAGED);
+
+    public EyeUpgradeItem(CyberwareProperties cyberwareProperties) {
+        super(cyberwareProperties);
     }
 
     @Override
@@ -18,11 +22,10 @@ public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
         return EnableDisableHelper.getUnlocalizedLabel(stack);
     }
 
-    private static final float[] f = new float[] { 1F, 0F, 0F };
-
     @Override
     public float[] getColor(ItemStack stack) {
-        return EnableDisableHelper.isEnabled(stack) ? f : null;
+        if (!EnableDisableHelper.isEnabled(stack)) return null;
+        return ENABLED_COLOR;
     }
 
     @Override
@@ -38,5 +41,13 @@ public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
     @Override
     public void use(Entity entity, ItemStack stack) {
         EnableDisableHelper.toggle(stack);
+    }
+
+    public static EyeUpgradeItem makeManufactured() {
+        return new EyeUpgradeItem(PROPERTIES.copy());
+    }
+
+    public static EyeUpgradeItem makeSalvaged(RegistryObject<? extends IDeconstructable> manufactured) {
+        return new EyeUpgradeItem(PROPERTIES.copy().salvaged().manufactured(manufactured));
     }
 }

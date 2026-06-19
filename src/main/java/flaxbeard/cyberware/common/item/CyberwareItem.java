@@ -1,62 +1,54 @@
 package flaxbeard.cyberware.common.item;
 
-import flaxbeard.cyberware.OverclockedOrgans;
 import flaxbeard.cyberware.api.item.ICyberware;
 import flaxbeard.cyberware.api.item.IDeconstructable;
+import flaxbeard.cyberware.common.misc.NNLUtil;
 import lombok.Getter;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-@Getter
-public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDeconstructable {
+public class CyberwareItem extends Item implements ICyberware, IDeconstructable {
     private final BodySlot slot;
     private final int essence;
-    private final @Nonnull List<RegistryObject<Item>> incompatible;
-    private final @Nullable List<RegistryObject<Item>> requirement;
-    private final boolean isManufactured;
-    private final @Nullable RegistryObject<CyberwareItem> manufactured;
+    private final int capacity;
+    private final int powerConsumption;
+    private final int powerProduction;
+    private final int maxInstallations;
+    private final boolean essential;
+    private final boolean isSalvaged;
 
-    public CyberwareItem(@Nonnull BodySlot slot, int essence,
-                         @Nonnull List<RegistryObject<Item>> incompatible,
-                         @Nullable List<RegistryObject<Item>> requirement) {
+    private final NonNullList<NonNullList<ItemStack>> requirements;
+    private final List<RegistryObject<? extends Item>> incompatible;
+    private final RegistryObject<? extends IDeconstructable> manufactured;
 
-        this(slot, essence, incompatible, requirement, null);
+    public CyberwareItem(Properties properties, CyberwareProperties cyberwareProperties) {
+        super(properties);
+
+        this.slot = cyberwareProperties.slot;
+        this.essence = cyberwareProperties.essence;
+        this.capacity = cyberwareProperties.capacity;
+        this.powerConsumption = cyberwareProperties.powerConsumption;
+        this.powerProduction = cyberwareProperties.powerProduction;
+        this.maxInstallations = cyberwareProperties.maxInstallations;
+        this.essential = cyberwareProperties.essential;
+        this.requirements = cyberwareProperties.requirements;
+        this.incompatible = cyberwareProperties.incompatible;
+        this.isSalvaged = cyberwareProperties.isSalvaged;
+        this.manufactured = cyberwareProperties.manufactured;
     }
 
-    public CyberwareItem(@Nonnull BodySlot slot, int essence,
-                         @Nonnull List<RegistryObject<Item>> incompatible,
-                         @Nullable List<RegistryObject<Item>> requirement,
-                         @Nullable RegistryObject<CyberwareItem> manufactured) {
-        this.slot = slot;
-        this.essence = essence;
-        this.requirement = requirement == null ? new ArrayList<>() : requirement;
-        this.incompatible = incompatible;
-        this.manufactured = manufactured;
-        this.isManufactured = manufactured != null;
-    }
-
-    public CyberwareItem(@Nonnull CyberwareItem cyberwareItem) {
-        this.slot = cyberwareItem.slot;
-        this.essence = cyberwareItem.essence;
-        this.requirement = new ArrayList<>(cyberwareItem.requirement == null?
-                new ArrayList<>() : cyberwareItem.requirement);
-        this.incompatible = new ArrayList<>(cyberwareItem.incompatible);
-        this.manufactured = cyberwareItem.manufactured;
-        this.isManufactured = manufactured != null;
+    public CyberwareItem(CyberwareProperties cyberwareProperties) {
+        this(new Item.Properties().tab(cyberwareProperties.isSalvaged
+                ? CreativeModeTabs.SALVAGED_GROUP
+                : CreativeModeTabs.MANUFACTURED_GROUP),
+                cyberwareProperties);
     }
 
     @Override
@@ -66,260 +58,168 @@ public class CyberwareItem extends CyberwareBaseItem implements ICyberware, IDec
 
     @Override
     public int installedStackSize(ItemStack stack) {
-        return 1;
+        return maxInstallations;
     }
 
     @Override
     public NonNullList<NonNullList<ItemStack>> required() {
-        return NonNullList.create();
+        return requirements;
     }
 
     @Override
     public boolean isIncompatible(ItemStack other) {
-        return other.getItem().getClass().isInstance(this);
-    }
+        if (!(other.getItem() instanceof CyberwareItem)) {
+            return false;
+        }
 
-    @Override
-    public boolean isEssential() {
-        return false;
-    }
+        CyberwareItem otherCyberware = (CyberwareItem) other.getItem();
+        if (otherCyberware.getClass() == getClass()
+                && otherCyberware.isSalvaged != isSalvaged) {
+            return true;
+        }
 
-    @Override
-    public int getCapacity(ItemStack wareStack) {
-        return 0;
+        return incompatible.stream()
+                .map(RegistryObject::get)
+                .anyMatch(item -> item == other.getItem());
     }
 
     @Override
     public IDeconstructable getManufactured() {
-        return isManufactured ? this
-                : Objects.requireNonNull(this.manufactured).get();
+        return isSalvaged ? manufactured.get() : this;
     }
 
     @Override
-    public void onAdded(LivingEntity livingEntity, ItemStack stack) {
-
+    public boolean isEssential() {
+        return essential;
     }
 
     @Override
-    public void onRemoved(LivingEntity livingEntity, ItemStack stack) {
-
-    }
-
-    @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable World worldIn,
-                                @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
-        if (!Screen.hasShiftDown()) {
-            tooltip.add(new TranslationTextComponent("tooltip.overclockedorgans.shift_prompt")
-                    .withStyle(TextFormatting.GRAY));
-            return;
-        }
-        tooltip.addAll(getDescription(stack));
-    }
-
-    public List<ITextComponent> getStackDesc() {
-        List<ITextComponent> toReturn = new ArrayList<>();
-
-        String key = "tooltip." + OverclockedOrgans.MOD_ID + "." + Objects.requireNonNull(this.getRegistryName()).getPath();
-        ITextComponent localized = new TranslationTextComponent(key);
-
-        for (String line : localized.getString().split("\\\\n")) {
-            if (!line.isEmpty()) {
-                toReturn.add(new TranslationTextComponent(line));
-            }
-        }
-
-        return toReturn;
-    }
-
-    public List<ITextComponent> getDescription(ItemStack stack) {
-        List<ITextComponent> toReturn = getStackDesc();
-
-        // --- Max Install ---
-        if (installedStackSize(stack) > 1) {
-            toReturn.add(new TranslationTextComponent("tooltip." + OverclockedOrgans.MOD_ID + ".max_install",
-                    installedStackSize(stack))
-                    .withStyle(TextFormatting.BLUE));
-        }
-
-        // --- Power Consumption ---
-        boolean hasPowerConsumption = false;
-        StringBuilder toAddPowerConsumption = new StringBuilder();
-        for (int i = 0; i < installedStackSize(stack); i++) {
-            ItemStack temp = stack.copy();
-            temp.setCount(i + 1);
-            int cost = this.getPowerConsumption();
-            if (cost > 0) hasPowerConsumption = true;
-
-            if (i != 0) {
-                toAddPowerConsumption.append(new TranslationTextComponent("tooltip." + OverclockedOrgans.MOD_ID + ".joiner").getString());
-            }
-            toAddPowerConsumption.append(" ").append(cost);
-        }
-
-        if (hasPowerConsumption) {
-            String key = hasCustomPowerMessage()
-                    ? "tooltip." + OverclockedOrgans.MOD_ID + "." + Objects.requireNonNull(this.getRegistryName()).getPath() + ".power_consumption"
-                    : "tooltip." + OverclockedOrgans.MOD_ID + ".power_consumption";
-
-            toReturn.add(new TranslationTextComponent(key, toAddPowerConsumption.toString())
-                    .withStyle(TextFormatting.GREEN));
-        }
-
-        // --- Power Production ---
-        boolean hasPowerProduction = false;
-        StringBuilder toAddPowerProduction = new StringBuilder();
-        for (int i = 0; i < installedStackSize(stack); i++) {
-            ItemStack temp = stack.copy();
-            temp.setCount(i + 1);
-            int cost = this.getPowerProduction();
-            if (cost > 0) hasPowerProduction = true;
-
-            if (i != 0) {
-                toAddPowerProduction.append(new TranslationTextComponent("tooltip." + OverclockedOrgans.MOD_ID + ".joiner").getString());
-            }
-            toAddPowerProduction.append(" ").append(cost);
-        }
-
-        if (hasPowerProduction) {
-            String toTranslate = hasCustomPowerMessage()
-                    ? "tooltip." + OverclockedOrgans.MOD_ID + "." + Objects.requireNonNull(this.getRegistryName()).getPath() + ".power_production"
-                    : "tooltip." + OverclockedOrgans.MOD_ID + ".power_production";
-
-            toReturn.add(new TranslationTextComponent(toTranslate, toAddPowerProduction.toString())
-                    .withStyle(TextFormatting.GREEN));
-        }
-
-        // --- Capacity ---
-        if (getCapacity(stack) > 0) {
-            String toTranslate = hasCustomCapacityMessage()
-                    ? "tooltip." + OverclockedOrgans.MOD_ID + "." + Objects.requireNonNull(this.getRegistryName()).getPath() + ".capacity"
-                    : "tooltip." + OverclockedOrgans.MOD_ID + ".capacity";
-
-            toReturn.add(new TranslationTextComponent(toTranslate, getCapacity(stack))
-                    .withStyle(TextFormatting.GREEN));
-        }
-
-        // --- Essence ---
-        boolean hasEssenceCost = false;
-        boolean essenceCostNegative = true;
-        StringBuilder toAddEssence = new StringBuilder();
-
-        for (int i = 0; i < installedStackSize(stack); i++) {
-            ItemStack temp = stack.copy();
-            temp.setCount(i + 1);
-            int cost = this.getEssenceCost(temp);
-
-            if (cost != 0) hasEssenceCost = true;
-            if (cost < 0) essenceCostNegative = false;
-
-            if (i != 0) {
-                toAddEssence.append(new TranslationTextComponent("tooltip." + OverclockedOrgans.MOD_ID + ".joiner").getString());
-            }
-            toAddEssence.append(" ").append(Math.abs(cost));
-        }
-
-        if (hasEssenceCost) {
-            String key = essenceCostNegative
-                    ? "tooltip." + OverclockedOrgans.MOD_ID + ".essence"
-                    : "tooltip." + OverclockedOrgans.MOD_ID + ".essence_add";
-
-            toReturn.add(new TranslationTextComponent(key, toAddEssence.toString())
-                    .withStyle(TextFormatting.DARK_PURPLE));
-        }
-
-        return toReturn;
-    }
-
-    public int getPowerConsumption() {
-        return 0;
-    }
-
-    public int getPowerProduction() {
-        return 0;
-    }
-
-    public boolean hasCustomPowerMessage() {
-        return false;
-    }
-
-    public boolean hasCustomCapacityMessage() {
-        return false;
+    public int getCapacity(ItemStack wareStack) {
+        return capacity;
     }
 
     @Override
     public int getEssenceCost(ItemStack stack) {
-        return 0;
+        if (!isSalvaged) return essence;
+        return essence + (int) Math.ceil(essence / 2F);
     }
 
-    public static CyberwareItemBuilder builder()  {
-        return CyberwareItemBuilder.create();
+    public int getPowerConsumption(ItemStack stack) {
+        return powerConsumption;
     }
 
-    public static class CyberwareItemBuilder {
-        private BodySlot slot;
-        private int essence;
-        private Set<RegistryObject<Item>> incompatible = new HashSet<>();
-        private List<RegistryObject<Item>> requirement = null;
-        private RegistryObject<CyberwareItem> manufactured = null;
+    public int getPowerProduction(ItemStack stack) {
+        return powerProduction;
+    }
 
-        private CyberwareItemBuilder() {}
+    @Override
+    public void onAdded(LivingEntity livingEntity, ItemStack stack) {
+        // override in subclasses
+    }
 
-        public static CyberwareItemBuilder create() {
-            return new CyberwareItemBuilder();
-        }
+    @Override
+    public void onRemoved(LivingEntity livingEntity, ItemStack stack) {
+        // override in subclasses
+    }
 
-        public CyberwareItemBuilder slot(BodySlot slot) {
-            if (slot == null) return this;
+    public static class CyberwareProperties {
+        private BodySlot slot = BodySlot.SKIN;
+        private int essence = 0;
+        private int capacity = 0;
+        private int powerConsumption = 0;
+        private int powerProduction = 0;
+        private int maxInstallations = 1;
+        private boolean essential = false;
+        @Getter
+        private boolean isSalvaged = false;
+
+        private final NonNullList<NonNullList<ItemStack>> requirements = NonNullList.create();
+        private final List<RegistryObject<? extends Item>> incompatible = new ArrayList<>();
+        private RegistryObject<? extends IDeconstructable> manufactured = null;
+
+        public CyberwareProperties slot(BodySlot slot) {
             this.slot = slot;
             return this;
         }
 
-        public CyberwareItemBuilder essence(int essence) {
-            if (essence < 0) return this;
+        public CyberwareProperties essence(int essence) {
             this.essence = essence;
             return this;
         }
 
-        public CyberwareItemBuilder incompatible(List<RegistryObject<Item>> incompatible) {
-            if (incompatible == null || incompatible.isEmpty()) return this;
-            this.incompatible.addAll(incompatible);
+        public CyberwareProperties capacity(int capacity) {
+            this.capacity = capacity;
             return this;
         }
 
-        public CyberwareItemBuilder addIncompatible(RegistryObject<Item> item) {
-            if (item == null) return this;
-            this.incompatible.add(item);
+        public CyberwareProperties powerConsumption(int powerConsumption) {
+            this.powerConsumption = powerConsumption;
             return this;
         }
 
-        public CyberwareItemBuilder requirement(List<RegistryObject<Item>> requirement) {
-            if (requirement == null || requirement.isEmpty()) return this;
-            this.requirement = requirement;
+        public CyberwareProperties powerProduction(int powerProduction) {
+            this.powerProduction = powerProduction;
             return this;
         }
 
-        public CyberwareItemBuilder addRequirement(RegistryObject<Item> item) {
-            if (item == null) return this;
-            if (this.requirement == null) this.requirement = new ArrayList<>();
-            this.requirement.add(item);
+        public CyberwareProperties maxInstallations(int maxInstallations) {
+            this.maxInstallations = Math.max(1, maxInstallations);
             return this;
         }
 
-        public CyberwareItemBuilder manufactured(RegistryObject<CyberwareItem> manufactured) {
-            if (manufactured == null) return this;
+        public CyberwareProperties essential() {
+            this.essential = true;
+            return this;
+        }
+
+        public CyberwareProperties manufactured(RegistryObject<? extends IDeconstructable> manufactured) {
             this.manufactured = manufactured;
             return this;
         }
 
-        public CyberwareItemBuilder manufactured(CyberwareItem item) {
-            this.manufactured = RegistryObject.of(item.getRegistryName(), ForgeRegistries.ITEMS);
+        public CyberwareProperties salvaged() {
+            this.isSalvaged = true;
             return this;
         }
 
-        public CyberwareItem build() {
-            if (slot == null) throw new IllegalStateException("CyberwareItem requires a BodySlot.");
-            if (incompatible == null) throw new IllegalStateException("CyberwareItem requires a non-null incompatible list.");
-            return new CyberwareItem(slot, essence, new ArrayList<>(incompatible), requirement, manufactured);
+        public CyberwareProperties requires(ItemStack... stacks) {
+            NonNullList<ItemStack> group = NNLUtil.fromArray(stacks);
+            requirements.add(group);
+            return this;
+        }
+
+        @SafeVarargs
+        public final CyberwareProperties incompatibleWith(RegistryObject<? extends Item>... items) {
+            Collections.addAll(incompatible, items);
+            return this;
+        }
+
+        public CyberwareProperties copy() {
+            CyberwareProperties copy = new CyberwareProperties();
+
+            copy.slot = this.slot;
+            copy.essence = this.essence;
+            copy.capacity = this.capacity;
+            copy.powerConsumption = this.powerConsumption;
+            copy.powerProduction = this.powerProduction;
+            copy.maxInstallations = this.maxInstallations;
+            copy.essential = this.essential;
+            copy.isSalvaged = this.isSalvaged;
+            copy.manufactured = this.manufactured;
+
+            for (NonNullList<ItemStack> group : this.requirements) {
+                NonNullList<ItemStack> copiedGroup = NonNullList.create();
+
+                for (ItemStack stack : group) {
+                    copiedGroup.add(stack.copy());
+                }
+
+                copy.requirements.add(copiedGroup);
+            }
+
+            copy.incompatible.addAll(this.incompatible);
+
+            return copy;
         }
     }
 }

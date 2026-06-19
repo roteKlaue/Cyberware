@@ -75,13 +75,13 @@ public class NeuropozyneItem extends Item {
                 true,
                 false
         );
-        IFormattableTextComponent iformattabletextcomponent = new TranslationTextComponent(CyberwarePotionEffects.NEUROPOZYNE.get().getDescriptionId());
+        IFormattableTextComponent component = new TranslationTextComponent(CyberwarePotionEffects.NEUROPOZYNE.get().getDescriptionId());
         Effect effect = CyberwarePotionEffects.NEUROPOZYNE.get().getEffect();
 
         if (effectinstance.getDuration() > 20) {
-            iformattabletextcomponent = new TranslationTextComponent("potion.withDuration", iformattabletextcomponent, EffectUtils.formatDuration(effectinstance, 1F));
+            component = new TranslationTextComponent("potion.withDuration", component, EffectUtils.formatDuration(effectinstance, 1F));
         }
 
-        components.add(iformattabletextcomponent.withStyle(effect.getCategory().getTooltipFormatting()));
+        components.add(component.withStyle(effect.getCategory().getTooltipFormatting()));
     }
 }
