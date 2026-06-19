@@ -21,7 +21,7 @@ public class ComponentBoxContainer extends Container {
     private final NonNullList<ItemStack> items;
     private final int numRows;
 
-    private static class ComponentBoxSlot extends Slot {
+    public static class ComponentBoxSlot extends Slot {
         public ComponentBoxSlot(IInventory inventory, int id, int x, int y) {
             super(inventory, id, x, y);
         }

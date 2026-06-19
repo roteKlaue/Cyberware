@@ -33,6 +33,8 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
     private EngineeringImageButton prevCompButton;
     private EngineeringImageButton nextBlueButton;
     private EngineeringImageButton prevBlueButton;
+    private boolean hasArchive;
+    private boolean hasComponentBoxes;
 
     public EngineeringTableScreen(EngineeringTableContainer container, PlayerInventory inventory, ITextComponent name) {
         super(container, inventory, name);
@@ -62,7 +64,7 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
         final int guiTop = this.topPos;
 
         nextCompButton = new EngineeringImageButton(
-                guiLeft + 7, guiTop + 131,
+                guiLeft - 21, guiTop + 131,
                 23, 13,
                 21, 166,
                 44, 166,
@@ -72,7 +74,7 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
         );
 
         prevCompButton = new EngineeringImageButton(
-                guiLeft + 43, guiTop + 131,
+                guiLeft - 57, guiTop + 131,
                 23, 13,
                 21, 179,
                 44, 179,
@@ -82,7 +84,7 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
         );
 
         nextBlueButton = new EngineeringImageButton(
-                guiLeft + 180, guiTop + 131,
+                guiLeft + 216, guiTop + 131,
                 23, 13,
                 21, 166,
                 44, 166,
@@ -92,7 +94,7 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
         );
 
         prevBlueButton = new EngineeringImageButton(
-                guiLeft + 216, guiTop + 131,
+                guiLeft + 180, guiTop + 131,
                 23, 13,
                 21, 179,
                 44, 179,
@@ -107,8 +109,8 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
         this.addButton(nextBlueButton);
         this.addButton(prevBlueButton);
 
-        boolean hasArchive = this.menu != null && this.menu.archive != null && this.menu.archiveList != null && this.menu.archiveList.size() > 1;
-        boolean hasComponentBoxes = this.menu != null && this.menu.componentBoxList != null && this.menu.componentBoxList.size() > 1;
+        hasArchive = this.menu != null && this.menu.archive != null && this.menu.archiveList != null && this.menu.archiveList.size() > 1;
+        hasComponentBoxes = this.menu != null && this.menu.componentBoxList != null && this.menu.componentBoxList.size() > 1;
 
         nextBlueButton.visible = prevBlueButton.visible = hasArchive;
         nextCompButton.visible = prevCompButton.visible = hasComponentBoxes;
@@ -180,37 +182,21 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
             }
         }
 
-        if (this.getButton() != null && this.getButton().isHovered()) {
-            List<ITextComponent> tooltip = new ArrayList<>();
-            tooltip.add(new TranslationTextComponent("gui.overclockedorgans.destroy"));
+        renderSlotTooltip(0,"gui.overclockedorgans.to_destroy", matrixStack, mouseX, mouseY);
+        renderSlotTooltip(1,"gui.overclockedorgans.insert_paper", matrixStack, mouseX, mouseY);
+        renderSlotTooltip(8,"gui.overclockedorgans.insert_blueprint", matrixStack, mouseX, mouseY);
+    }
 
-            if (this.menu.getSlot(1).hasItem()
-                    && this.menu.getSlot(1).getItem().getItem() == Items.PAPER) {
-                tooltip.add(new TranslationTextComponent("gui.overclockedorgans.chance_for_blueprint", CyberwareConfig.ENGINEERING_CHANCE.get()));
-            }
+    private void renderSlotTooltip(int index, String tooltip, MatrixStack matrixStack, int mouseX, int mouseY) {
+        Slot slot8 = this.menu.slots.stream()
+                .filter(s -> s.getSlotIndex() == index)
+                .findFirst()
+                .orElseThrow(IllegalStateException::new);
 
-            this.renderComponentTooltip(matrixStack, tooltip, mouseX, mouseY);
-        }
-
-        Slot slot0 = this.menu.getSlot(0);
-        if (!slot0.hasItem() && isHovering(slot0.x, slot0.y, 16, 16, mouseX, mouseY)) {
-            List<ITextComponent> tooltip = new ArrayList<>();
-            tooltip.add(new TranslationTextComponent("gui.overclockedorgans.to_destroy"));
-            this.renderComponentTooltip(matrixStack, tooltip, mouseX, mouseY);
-        }
-
-        Slot slot1 = this.menu.getSlot(1);
-        if (!slot1.hasItem() && isHovering(slot1.x, slot1.y, 16, 16, mouseX, mouseY)) {
-            List<ITextComponent> tooltip = new ArrayList<>();
-            tooltip.add(new TranslationTextComponent("gui.overclockedorgans.insert_paper"));
-            this.renderComponentTooltip(matrixStack, tooltip, mouseX, mouseY);
-        }
-
-        Slot slot8 = this.menu.getSlot(8);
         if (!slot8.hasItem() && isHovering(slot8.x, slot8.y, 16, 16, mouseX, mouseY)) {
-            List<ITextComponent> tooltip = new ArrayList<>();
-            tooltip.add(new TranslationTextComponent("gui.overclockedorgans.insert_blueprint"));
-            this.renderComponentTooltip(matrixStack, tooltip, mouseX, mouseY);
+            List<ITextComponent> ttp = new ArrayList<>();
+            ttp.add(new TranslationTextComponent(tooltip));
+            this.renderComponentTooltip(matrixStack, ttp, mouseX, mouseY);
         }
     }
 
@@ -221,12 +207,30 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
 
         this.minecraft.getTextureManager().bind(ENGINEERING_GUI_TEXTURES);
 
-        int i = (this.width - this.imageWidth) / 2;
-        int j = (this.height - this.imageHeight) / 2;
+        int mainX = (this.width - this.imageWidth) / 2;
+        int mainY = (this.height - this.imageHeight) / 2;
+        int leftWidth = hasComponentBoxes ? (18 * 3 + 10) : 0;
+        int rightWidth = hasArchive ? (18 * 3 + 10) : 0;
 
-        blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        if (hasComponentBoxes) {
+            this.minecraft.getTextureManager().bind(ADDITIONAL_TEXTURE);
+            blit(matrixStack,
+                    mainX - leftWidth,
+                    mainY,
+                    this.imageWidth,
+                    0,
+                    leftWidth,
+                    this.imageHeight);
+        }
 
-        this.minecraft.getTextureManager().bind(ADDITIONAL_TEXTURE);
+        this.minecraft.getTextureManager().bind(ENGINEERING_GUI_TEXTURES);
+        blit(matrixStack,
+                mainX,
+                mainY,
+                0,
+                0,
+                this.imageWidth + rightWidth,
+                this.imageHeight);
     }
 
     private BlueprintArchiveBlockEntity archive() {

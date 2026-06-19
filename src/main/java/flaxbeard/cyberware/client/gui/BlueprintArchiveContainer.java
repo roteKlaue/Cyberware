@@ -25,7 +25,7 @@ public class BlueprintArchiveContainer extends Container {
         buildSlots(playerInventory, tileEntity);
     }
 
-    private static class BlueprintArchiveSlot extends Slot {
+    public static class BlueprintArchiveSlot extends Slot {
         public BlueprintArchiveSlot(IInventory inventory, int id, int x, int y) {
             super(inventory, id, x, y);
         }

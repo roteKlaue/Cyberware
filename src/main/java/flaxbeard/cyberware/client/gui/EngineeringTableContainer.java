@@ -1,6 +1,5 @@
 package flaxbeard.cyberware.client.gui;
 
-import flaxbeard.cyberware.common.block.ComponentBoxBlock;
 import flaxbeard.cyberware.common.block.entities.BlueprintArchiveBlockEntity;
 import flaxbeard.cyberware.common.block.entities.ComponentBoxBlockEntity;
 import flaxbeard.cyberware.common.block.entities.EngineeringTableBlockEntity;
@@ -9,10 +8,12 @@ import lombok.Getter;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -20,68 +21,24 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EngineeringTableContainer extends Container {
     @Getter
     private final EngineeringTableBlockEntity blockEntity;
+    private final List<Slot> dynamicSlots = new ArrayList<>();
 
     public BlueprintArchiveBlockEntity archive;
     public int archiveIndex = 0;
     public ArrayList<BlueprintArchiveBlockEntity> archiveList = new ArrayList<>();
 
-    public Object componentBox;
-    public ArrayList<Object> componentBoxList = new ArrayList<>();
+    public ComponentBoxBlockEntity componentBox;
+    public ArrayList<ComponentBoxBlockEntity> componentBoxList = new ArrayList<>();
     public int componentBoxIndex = 0;
 
     public EngineeringTableContainer(int windowId, PlayerInventory inv, EngineeringTableBlockEntity blockEntity) {
         super(CyberwareContainers.ENGINEERING.get(), windowId);
         this.blockEntity = blockEntity;
-
-        archive = null;
-        componentBox = null;
-        BlockPos target = null;
-
-        // if (blockEntity.lastPlayerArchive.containsKey(uuid))
-        // {
-        //     target = blockEntity.lastPlayerArchive.get(uuid);
-        // }
-
-        for (int y = -2; y < 2; y++) {
-            for (int x = -2; x < 3; x++) {
-                for (int z = -2; z < 3; z++) {
-                    BlockPos pos = blockEntity.getBlockPos().offset(x, y, z);
-                    TileEntity tileEntity = null;
-                    if (blockEntity.getLevel() != null) {
-                        tileEntity = blockEntity.getLevel().getBlockEntity(pos);
-                    }
-                    if (tileEntity instanceof BlueprintArchiveBlockEntity) {
-                        if (archive == null || tileEntity.getBlockPos().equals(target)) {
-                            archive = (BlueprintArchiveBlockEntity) tileEntity;
-                            archiveIndex = archiveList.size();
-                        }
-
-                        archiveList.add((BlueprintArchiveBlockEntity) tileEntity);
-                    }
-                }
-            }
-        }
-
-        for (int y = -2; y < 2; y++) {
-            for (int x = -2; x < 3; x++) {
-                for (int z = -2; z < 3; z++) {
-                    BlockPos pos = blockEntity.getBlockPos().offset(x, y, z);
-                    TileEntity tileEntity = blockEntity.getLevel().getBlockEntity(pos);
-                    if (tileEntity instanceof ComponentBoxBlockEntity) {
-                        if (componentBox == null) {
-                            componentBox = tileEntity;
-                            componentBoxIndex = componentBoxList.size();
-                        }
-
-                        componentBoxList.add(tileEntity);
-                    }
-                }
-            }
-        }
 
         addSlot(new EngineeringSlot(this.blockEntity.slots, 0, 15, 20));
         addSlot(new EngineeringSlot(this.blockEntity.slots, 1, 15, 53));
@@ -110,6 +67,53 @@ public class EngineeringTableContainer extends Container {
                     startX + col * 18,
                     startY + 58));
         }
+
+        archive = null;
+        componentBox = null;
+        BlockPos target = null;
+
+        String uuid = inv.player.getStringUUID();
+        if (blockEntity.lastPlayerArchive.containsKey(uuid)) {
+            target = blockEntity.lastPlayerArchive.get(uuid);
+        }
+
+        for (int y = -2; y < 2; y++) {
+            for (int x = -2; x < 3; x++) {
+                for (int z = -2; z < 3; z++) {
+                    BlockPos pos = blockEntity.getBlockPos().offset(x, y, z);
+                    TileEntity tileEntity = null;
+                    if (blockEntity.getLevel() != null) {
+                        tileEntity = blockEntity.getLevel().getBlockEntity(pos);
+                    }
+                    if (tileEntity instanceof BlueprintArchiveBlockEntity) {
+                        if (archive == null || tileEntity.getBlockPos().equals(target)) {
+                            archive = (BlueprintArchiveBlockEntity) tileEntity;
+                            archiveIndex = archiveList.size();
+                        }
+
+                        archiveList.add((BlueprintArchiveBlockEntity) tileEntity);
+                    }
+                }
+            }
+        }
+
+        for (int y = -2; y < 2; y++) {
+            for (int x = -2; x < 3; x++) {
+                for (int z = -2; z < 3; z++) {
+                    BlockPos pos = blockEntity.getBlockPos().offset(x, y, z);
+                    TileEntity tileEntity = blockEntity.getLevel().getBlockEntity(pos);
+                    if (tileEntity instanceof ComponentBoxBlockEntity) {
+                        if (componentBox == null) {
+                            componentBox = (ComponentBoxBlockEntity) tileEntity;
+                            componentBoxIndex = componentBoxList.size();
+                        }
+                        componentBoxList.add((ComponentBoxBlockEntity) tileEntity);
+                    }
+                }
+            }
+        }
+
+        rebuildDynamicSlots();
     }
 
     @Override
@@ -213,16 +217,96 @@ public class EngineeringTableContainer extends Container {
     }
 
     public void prevArchive() {
+        if (archiveList.isEmpty()) return;
+
+        archiveIndex = (archiveIndex + 1) % archiveList.size();
+        archive = archiveList.get(archiveIndex);
+
+        rebuildDynamicSlots();
     }
 
     public void nextArchive() {
-    }
+        if (archiveList.isEmpty()) return;
 
-    public void prevComponentBox() {
+        archiveIndex = (archiveIndex - 1 + archiveList.size()) % archiveList.size();
+        archive = archiveList.get(archiveIndex);
+
+        rebuildDynamicSlots();
     }
 
     public void nextComponentBox() {
+        if (componentBoxList.isEmpty()) return;
 
+        componentBoxIndex = (componentBoxIndex + 1) % componentBoxList.size();
+        componentBox = componentBoxList.get(componentBoxIndex);
+
+        rebuildDynamicSlots();
+    }
+
+    public void prevComponentBox() {
+        if (componentBoxList.isEmpty()) return;
+
+        componentBoxIndex = (componentBoxIndex - 1 + componentBoxList.size()) % componentBoxList.size();
+        componentBox = componentBoxList.get(componentBoxIndex);
+
+        rebuildDynamicSlots();
+    }
+
+    private void rebuildDynamicSlots() {
+        for (Slot slot : dynamicSlots) {
+            this.slots.remove(slot);
+        }
+        dynamicSlots.clear();
+
+        if (archive != null) {
+            IInventory inventory = archive;
+
+
+            final int rows = 6;
+            final int cols = (int) Math.ceil(inventory.getContainerSize() / (double) rows);
+
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
+                    int index = col + row * cols;
+
+                    if (index >= inventory.getContainerSize()) {
+                        continue;
+                    }
+
+                    Slot slot = new BlueprintArchiveContainer.BlueprintArchiveSlot(
+                            inventory,
+                            index,
+                            181 + col * 18,
+                            22 + row * 18
+                    );
+
+                    dynamicSlots.add(slot);
+                    addSlot(slot);
+                }
+            }
+        }
+
+        if (componentBox instanceof ComponentBoxBlockEntity) {
+            IInventory inventory = componentBox;
+
+
+            final int rows = 6;
+            final int cols = (int) Math.ceil(inventory.getContainerSize() / (double) rows);
+
+            for (int row = 0; row < 6; row++) {
+                for (int col = 0; col < cols; col++) {
+                    int index = col + row * cols;
+                    Slot s = new ComponentBoxContainer.ComponentBoxSlot(
+                            inventory,
+                            index,
+                            -56 + col * 18,
+                            22 + row * 18
+                    );
+                    dynamicSlots.add(s);
+                    this.addSlot(s);
+                }
+            }
+        }
     }
 
     public class EngineeringSlot extends SlotItemHandler {
@@ -267,5 +351,14 @@ public class EngineeringTableContainer extends Container {
             entity.refreshCraftingResult();
             return super.onTake(player, stack);
         }
+    }
+
+    public static EngineeringTableContainer of(int windowId, PlayerInventory inv, PacketBuffer data) {
+        BlockPos pos = data.readBlockPos();
+        TileEntity tile = inv.player.level.getBlockEntity(pos);
+        if (tile instanceof EngineeringTableBlockEntity) {
+            return new EngineeringTableContainer(windowId, inv, (EngineeringTableBlockEntity) tile);
+        }
+        return null;
     }
 }
