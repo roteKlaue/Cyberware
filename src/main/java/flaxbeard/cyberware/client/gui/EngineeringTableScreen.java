@@ -109,11 +109,11 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
         this.addButton(nextBlueButton);
         this.addButton(prevBlueButton);
 
-        hasArchive = this.menu != null && this.menu.archive != null && this.menu.archiveList != null && this.menu.archiveList.size() > 1;
-        hasComponentBoxes = this.menu != null && this.menu.componentBoxList != null && this.menu.componentBoxList.size() > 1;
+        hasArchive = this.menu != null && this.menu.archive != null && this.menu.archiveList != null && !this.menu.archiveList.isEmpty();
+        hasComponentBoxes = this.menu != null && this.menu.componentBoxList != null && !this.menu.componentBoxList.isEmpty();
 
-        nextBlueButton.visible = prevBlueButton.visible = hasArchive;
-        nextCompButton.visible = prevCompButton.visible = hasComponentBoxes;
+        nextBlueButton.visible = prevBlueButton.visible = hasArchive && this.menu.archiveList.size() > 1;
+        nextCompButton.visible = prevCompButton.visible = hasComponentBoxes && this.menu.componentBoxList.size() > 1;
     }
 
     public void onClick(EngineeringImageButton button) {
@@ -231,6 +231,14 @@ public class EngineeringTableScreen extends ContainerScreen<EngineeringTableCont
                 0,
                 this.imageWidth + rightWidth,
                 this.imageHeight);
+    }
+
+    @Override
+    protected void renderLabels(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.renderLabels(matrixStack, mouseX, mouseY);
+        if (!hasArchive || this.minecraft == null || this.minecraft.player == null) return;
+        BlueprintArchiveBlockEntity archive = this.menu.archive;
+        BlueprintArchiveScreen.renderItemsAboveBlueprints(this.menu.dynamicArchiveSlots::get, archive.getContainerSize() / 3, 3, archive.getContainerSize(), this.minecraft.player, this.itemRenderer, this.font);
     }
 
     private BlueprintArchiveBlockEntity archive() {

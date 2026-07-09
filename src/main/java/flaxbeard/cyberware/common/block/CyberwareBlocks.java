@@ -31,6 +31,7 @@ public class CyberwareBlocks {
     public static final RegisteredBlock<ChargerBlock> CHARGER_BLOCK = registerBlock("charger", ChargerBlock::new);
     public static final RegisteredBlock<SurgeryBlock> SURGERY_BLOCK = registerBlock("surgery", SurgeryBlock::new);
     public static final RegisteredBlock<ScannerBlock> SCANNER_BLOCK = registerBlock("scanner", ScannerBlock::new);
+    public static final RegisteredBlock<RadioBlock> RADIO_BLOCK = registerBlock("radio", RadioBlock::new);
 
     public static <T extends Block> RegisteredBlock<T> registerBlock(String id, Supplier<T> supplier) {
         return registerBlock(id, supplier, BlockItem::new);

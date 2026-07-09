@@ -3,7 +3,6 @@ package flaxbeard.cyberware.common.block.entities;
 import flaxbeard.cyberware.OverclockedOrgans;
 import lombok.Setter;
 import net.minecraft.block.BlockState;
-import net.minecraft.data.BlockStateVariantBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -12,7 +11,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
@@ -20,14 +18,14 @@ import javax.annotation.Nullable;
 
 public class NameContainerProvider<T extends NameContainerProvider<T>> extends TileEntity implements INamedContainerProvider {
     @Setter
-    public ITextComponent customName = null;
+    protected ITextComponent customName = null;
     private final String cachedKey;
-    private final BlockStateVariantBuilder.ITriFunction<Integer, PlayerInventory, T, Container> container;
+    private final ContainerFactory<T> container;
     private final Class<T> tClass;
 
     public NameContainerProvider(TileEntityType<T> tileEntityType,
                                  String blockName,
-                                 BlockStateVariantBuilder.ITriFunction<Integer, PlayerInventory, T, Container> containerSupplier,
+                                 ContainerFactory<T> containerSupplier,
                                  Class<T> tClass) {
         super(tileEntityType);
         this.cachedKey = "container." + OverclockedOrgans.MOD_ID + "." + blockName;
@@ -70,6 +68,11 @@ public class NameContainerProvider<T extends NameContainerProvider<T>> extends T
     @Override
     public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
         if (!tClass.isInstance(this)) return null;
-        return container.apply(id, inventory, tClass.cast(this));
+        return container.create(id, inventory, tClass.cast(this));
+    }
+
+    @FunctionalInterface
+    public interface ContainerFactory<T extends TileEntity> {
+        Container create(int id, PlayerInventory inventory, T tileEntity);
     }
 }

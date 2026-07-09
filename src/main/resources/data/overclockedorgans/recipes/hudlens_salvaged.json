@@ -1,0 +1,24 @@
+{
+  "type": "overclockedorgans:destructing",
+  "input": {
+    "item": "overclockedorgans:hudlens_salvaged"
+  },
+  "outputs": [
+    {
+      "item": "overclockedorgans:ssc",
+      "amount": 1
+    },
+    {
+      "item": "overclockedorgans:fiberoptics",
+      "amount": 1
+    },
+    {
+      "item": "overclockedorgans:fullerene",
+      "amount": 1
+    },
+    {
+      "item": "overclockedorgans:synthnerves",
+      "amount": 2
+    }
+  ]
+}

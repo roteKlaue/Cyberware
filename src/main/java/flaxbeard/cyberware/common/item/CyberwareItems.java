@@ -87,15 +87,6 @@ public class CyberwareItems {
     public static final RegistryObject<BlueprintItem> BLUEPRINT = ITEMS.register("blueprint",
             BlueprintItem::new);
 
-    public static final List<RegistryObject<? extends Item>> MANUFACTURED_ITEMS = Arrays.asList(
-//            BLUEPRINT,
-            CYBER_EYES_MANUFACTURED,
-            SHADES,
-            SHADES2,
-            JACKET,
-            TRENCHCOAT
-    );
-
     static {
         boolean katana = CyberwareConfig.ENABLE_KATANA.get();
         if (katana) {

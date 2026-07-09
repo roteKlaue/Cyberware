@@ -48,6 +48,8 @@ public class EyeUpgradeItem extends CyberwareItem implements IMenuItem, IHudjack
     }
 
     public static EyeUpgradeItem makeSalvaged(RegistryObject<? extends IDeconstructable> manufactured) {
-        return new EyeUpgradeItem(PROPERTIES.copy().salvaged().manufactured(manufactured));
+        return new EyeUpgradeItem(PROPERTIES.copy()
+                .salvaged()
+                .manufactured(manufactured));
     }
 }

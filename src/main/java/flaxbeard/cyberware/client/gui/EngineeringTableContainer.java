@@ -27,6 +27,8 @@ public class EngineeringTableContainer extends Container {
     @Getter
     private final EngineeringTableBlockEntity blockEntity;
     private final List<Slot> dynamicSlots = new ArrayList<>();
+    public final List<Slot> dynamicComponentBoxSlots = new ArrayList<>();
+    public final List<Slot> dynamicArchiveSlots = new ArrayList<>();
 
     public BlueprintArchiveBlockEntity archive;
     public int archiveIndex = 0;
@@ -257,6 +259,8 @@ public class EngineeringTableContainer extends Container {
             this.slots.remove(slot);
         }
         dynamicSlots.clear();
+        dynamicComponentBoxSlots.clear();
+        dynamicArchiveSlots.clear();
 
         if (archive != null) {
             IInventory inventory = archive;
@@ -281,6 +285,7 @@ public class EngineeringTableContainer extends Container {
                     );
 
                     dynamicSlots.add(slot);
+                    dynamicArchiveSlots.add(slot);
                     addSlot(slot);
                 }
             }
@@ -303,6 +308,7 @@ public class EngineeringTableContainer extends Container {
                             22 + row * 18
                     );
                     dynamicSlots.add(s);
+                    dynamicComponentBoxSlots.add(s);
                     this.addSlot(s);
                 }
             }

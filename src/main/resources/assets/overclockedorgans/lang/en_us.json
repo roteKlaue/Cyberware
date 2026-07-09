@@ -103,6 +103,7 @@
   "block.overclockedorgans.charger": "Charger",
   "block.overclockedorgans.surgery": "Robosurgeron",
   "block.overclockedorgans.scanner": "Cyberware Scanner",
+  "block.overclockedorgans.radio": "Radio Kit",
 
   "itemGroup.overclockedorgans.manufacturedModTab": "Cyberware Manufactured",
   "itemGroup.overclockedorgans.salvagedModTab": "Cyberware Salvaged",

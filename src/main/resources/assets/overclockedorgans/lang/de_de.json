@@ -29,7 +29,8 @@
   "item.overclockedorgans.upgrade_hudjack": "HUD-Jack",
   "item.overclockedorgans.upgrade_targeting": "Zielsystem-Overlay",
   "item.overclockedorgans.upgrade_zoom": "Distanz-Verstärker",
-  "item.overclockedorgans.upgrade_hudlens": "HUD-Linse",
+  "item.overclockedorgans.hudlens_salvaged": "Geborgene HUD-Linse",
+  "item.overclockedorgans.hudlens_manufactured": "HUD-Linse",
   "item.overclockedorgans.exp_capsule": "Erfahrungskapsel",
   "item.overclockedorgans.upgrade_cortical_stack": "Kortikaler Stack",
   "item.overclockedorgans.upgrade_ender_jammer": "Ender-Störer",
@@ -104,6 +105,7 @@
   "block.overclockedorgans.charger": "Ladestation",
   "block.overclockedorgans.surgery": "Robochirurg",
   "block.overclockedorgans.scanner": "Cyberware-Scanner",
+  "block.overclockedorgans.radio": "Radio Kit",
 
   "itemGroup.overclockedorgans.manufacturedModTab": "Cyberware – Hergestellt",
   "itemGroup.overclockedorgans.salvagedModTab": "Cyberware – Geborgen",
@@ -196,5 +198,8 @@
   "gui.overclockedorgans.scanner_saying.68": "An Lycaon erinnern",
 
   "keybinds.overclockedorgans.menu": "Menü öffnen",
-  "keybinds.overclockedorgans.category": "Cyberware"
+  "keybinds.overclockedorgans.category": "Cyberware",
+
+  "effect.overclockedorgans.neuropozyne": "Anti-Rejection",
+  "effect.overclockedorgans.rejection": "Rejection"
 }

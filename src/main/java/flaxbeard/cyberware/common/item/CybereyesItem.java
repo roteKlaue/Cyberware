@@ -69,6 +69,8 @@ public class CybereyesItem extends CyberwareItem {
     }
 
     public static CybereyesItem makeSalvaged(RegistryObject<? extends IDeconstructable> manufactured) {
-        return new CybereyesItem(PROPERTIES.copy().salvaged().manufactured(manufactured));
+        return new CybereyesItem(PROPERTIES.copy()
+                .salvaged()
+                .manufactured(manufactured));
     }
 }

@@ -6,8 +6,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import flaxbeard.cyberware.OverclockedOrgans;
 
 import flaxbeard.cyberware.common.item.BlueprintItem;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -56,15 +60,18 @@ public class BlueprintArchiveScreen extends ContainerScreen<BlueprintArchiveCont
 
     private void renderStoredItemsAboveBlueprints(@Nonnull MatrixStack matrixStack) {
         if (this.minecraft == null || this.minecraft.player == null) return;
+        renderItemsAboveBlueprints(this.menu::getSlot, this.inventoryRows, 9, this.menu.slots.size(), this.minecraft.player, this.itemRenderer, this.font);
+    }
 
+    public static void renderItemsAboveBlueprints(ISlotGetter container, int rows, int columns, int slotCount, @Nonnull PlayerEntity player, ItemRenderer itemRenderer, FontRenderer font) {
         final int ITEM_SIZE = 16;
         final int SLOT_SIZE = 18;
         final int H_CENTER = (SLOT_SIZE - ITEM_SIZE) / 2;
         final int VERTICAL_GAP = 2;
 
-        int containerSlots = this.inventoryRows * 9;
-        for (int slotIndex = 0; slotIndex < containerSlots && slotIndex < this.menu.slots.size(); slotIndex++) {
-            Slot slot = this.menu.getSlot(slotIndex);
+        int containerSlots = rows * columns;
+        for (int slotIndex = 0; slotIndex < containerSlots && slotIndex < slotCount; slotIndex++) {
+            Slot slot = container.getSlot(slotIndex);
             ItemStack stackInSlot = slot.getItem();
 
             if (!stackInSlot.isEmpty() && stackInSlot.getItem() instanceof BlueprintItem) {
@@ -76,9 +83,9 @@ public class BlueprintArchiveScreen extends ContainerScreen<BlueprintArchiveCont
                     int drawX = slotX + H_CENTER - 1;
                     int drawY = slotY - ITEM_SIZE - VERTICAL_GAP + SLOT_SIZE;
 
-                    this.itemRenderer.blitOffset = 201.0F;
-                    this.itemRenderer.renderAndDecorateItem(this.minecraft.player, stored, drawX, drawY);
-                    this.itemRenderer.renderGuiItemDecorations(this.font, stored, drawX, drawY, null);
+                    itemRenderer.blitOffset = 201.0F;
+                    itemRenderer.renderAndDecorateItem(player, stored, drawX, drawY);
+                    itemRenderer.renderGuiItemDecorations(font, stored, drawX, drawY, null);
                 }
             }
         }

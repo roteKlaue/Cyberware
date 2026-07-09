@@ -1,0 +1,30 @@
+{
+  "type": "overclockedorgans:engineering",
+  "blueprint": "overclockedorgans:hudlens_manufactured",
+  "parts": [
+    {
+      "item": {
+        "item": "overclockedorgans:ssc"
+      },
+      "amount": 1
+    },
+    {
+      "item": {
+        "item": "overclockedorgans:fiberoptics"
+      },
+      "amount": 1
+    },
+    {
+      "item": {
+        "item": "overclockedorgans:fullerene"
+      },
+      "amount": 1
+    },
+    {
+      "item": {
+        "item": "overclockedorgans:synthnerves"
+      },
+      "amount": 2
+    }
+  ]
+}

@@ -48,6 +48,7 @@ public class DirectionalBlock extends Block {
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
+    @Nonnull
     public static VoxelShape getDirectionalShape(@Nonnull BlockState state,
                                                  @Nonnull VoxelShape south,
                                                  @Nonnull VoxelShape west,
